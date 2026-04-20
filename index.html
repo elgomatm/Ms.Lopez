@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meet Malik — A Life Story for Ms. Lopes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Noise texture overlay -->
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- Top progress bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <div class="layout">
+
+    <!-- ═══════════════════════════════════════
+         LEFT — Sticky Character Panel
+    ════════════════════════════════════════ -->
+    <aside class="char-panel" id="charPanel">
+      <!-- Red atmospheric glow behind character -->
+      <div class="char-glow" id="charGlow"></div>
+
+      <!-- Character canvas -->
+      <canvas id="charCanvas"></canvas>
+
+      <!-- Stage label block -->
+      <div class="char-meta" id="charMeta">
+        <div class="char-age-pill" id="charAgePill">Age 0 – 3</div>
+        <div class="char-chapter" id="charChapter">The Beginning</div>
+        <div class="char-desc" id="charDesc">Curious, giggly, and full of wonder from day one.</div>
+      </div>
+
+      <!-- Timeline progress dots -->
+      <div class="char-dots" id="charDots"></div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════
+         RIGHT — Scrollable Content
+    ════════════════════════════════════════ -->
+    <main class="content-panel" id="contentPanel">
+
+      <!-- ── HERO ── -->
+      <section class="ls" data-stage="0" id="s-hero">
+        <div class="ls-inner">
+          <div class="dedication-tag">A note for Ms. Lopes ♥</div>
+          <span class="ls-num">00</span>
+          <h1 class="ls-title">Hello,<br><span class="accent">Meet<br>Malik</span></h1>
+          <p class="ls-body">Thank you for taking the time to learn a little about me. I put this together so you could see where I come from, what I stand for, and where I'm headed — chapter by chapter.</p>
+          <p class="ls-body">Scroll down — I'll walk you through it. 👇</p>
+          <div class="scroll-cta">
+            <div class="cta-arrow"></div>
+            <span>Scroll to begin</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CHILDHOOD ── -->
+      <section class="ls" data-stage="0" id="s-childhood">
+        <div class="ls-inner">
+          <span class="ls-num">01</span>
+          <h2 class="ls-title">Early Days</h2>
+          <h3 class="ls-subtitle">Where It All Started</h3>
+          <p class="ls-body">Every story has a beginning. Mine started with wide eyes, big curiosity, and the warmth of a family that showed me what really matters in life from the very start.</p>
+          <p class="ls-body">Those early years planted seeds — gratitude, resilience, and a love for learning that never went away.</p>
+          <div class="chip-row">
+            <span class="chip">🌟 Full of wonder</span>
+            <span class="chip">❤️ Loved deeply</span>
+            <span class="chip">🏡 Grounded</span>
+          </div>
+          <div class="photo-slots">
+            <div class="photo-slot" data-label="Baby photo">👶</div>
+            <div class="photo-slot small" data-label="Growing up">🏡</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FAMILY ── -->
+      <section class="ls" data-stage="1" id="s-family">
+        <div class="ls-inner">
+          <span class="ls-num">02</span>
+          <h2 class="ls-title">My Family</h2>
+          <h3 class="ls-subtitle">The People Who Made Me, Me</h3>
+          <p class="ls-body">Family is everything. I was raised with strong values — respect, generosity, and a love that doesn't ask for anything back. They're my foundation and my greatest pride.</p>
+          <p class="ls-body">No matter how far life takes me, my roots always bring me back to the people and the love that started it all.</p>
+          <div class="photo-slots">
+            <div class="photo-slot large" data-label="Family photo">👨‍👩‍👦</div>
+            <div class="photo-slot small" data-label="A cherished moment">❤️</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SCHOOL ── -->
+      <section class="ls" data-stage="1" id="s-school">
+        <div class="ls-inner">
+          <span class="ls-num">03</span>
+          <h2 class="ls-title">School Days</h2>
+          <h3 class="ls-subtitle">Learning, Growing, Becoming</h3>
+          <p class="ls-body">School was where I realized I genuinely loved learning — not just for grades, but because understanding how the world works actually excited me.</p>
+          <p class="ls-body">Those years built my discipline, my friendships, and my belief that education is one of the most powerful tools a person can have.</p>
+          <div class="chip-row">
+            <span class="chip">📚 Curious learner</span>
+            <span class="chip">🎯 Goal-oriented</span>
+            <span class="chip">🤝 Team player</span>
+          </div>
+          <div class="photo-slots">
+            <div class="photo-slot" data-label="School days">🎒</div>
+            <div class="photo-slot small" data-label="Study time">📖</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── HOBBIES ── -->
+      <section class="ls" data-stage="2" id="s-hobbies">
+        <div class="ls-inner">
+          <span class="ls-num">04</span>
+          <h2 class="ls-title">My Passions</h2>
+          <h3 class="ls-subtitle">What Makes Me Come Alive</h3>
+          <p class="ls-body">Outside of work and study, you'll find me doing things that genuinely light me up. Hobbies aren't just pastimes — they're a window into who someone really is.</p>
+          <div class="hobby-grid">
+            <div class="hobby-tile"><span class="ht-icon">⚽</span><span class="ht-label">Sports</span></div>
+            <div class="hobby-tile"><span class="ht-icon">🎵</span><span class="ht-label">Music</span></div>
+            <div class="hobby-tile"><span class="ht-icon">📚</span><span class="ht-label">Reading</span></div>
+            <div class="hobby-tile"><span class="ht-icon">✈️</span><span class="ht-label">Travel</span></div>
+            <div class="hobby-tile"><span class="ht-icon">🍳</span><span class="ht-label">Cooking</span></div>
+            <div class="hobby-tile"><span class="ht-icon">💻</span><span class="ht-label">Tech</span></div>
+          </div>
+          <div class="photo-slots">
+            <div class="photo-slot" data-label="Doing what I love">⚽</div>
+            <div class="photo-slot small" data-label="Creative time">🎨</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── COLLEGE ── -->
+      <section class="ls" data-stage="3" id="s-college">
+        <div class="ls-inner">
+          <span class="ls-num">05</span>
+          <h2 class="ls-title">College Life</h2>
+          <h3 class="ls-subtitle">The Years That Shaped My Future</h3>
+          <p class="ls-body">College was a turning point. It's where I truly grew up — not just academically, but as a person. Late nights studying, breakthroughs at 2am, friendships that hold strong to this day.</p>
+          <p class="ls-body">The grind was real. But so was the growth.</p>
+          <div class="photo-slots">
+            <div class="photo-slot large" data-label="Campus life">🏫</div>
+            <div class="photo-slot small" data-label="Study mode">🤓</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DEGREE ── -->
+      <section class="ls" data-stage="3" id="s-degree">
+        <div class="ls-inner">
+          <span class="ls-num">06</span>
+          <h2 class="ls-title">My Degree</h2>
+          <h3 class="ls-subtitle">Knowledge Earned, Not Given</h3>
+          <div class="diploma-block">
+            <div class="diploma-seal">🎓</div>
+            <div class="diploma-text">
+              <div class="diploma-label">Degree of Achievement</div>
+              <div class="diploma-field">Bachelor of Science</div>
+              <div class="diploma-major">Computer Science</div>
+            </div>
+          </div>
+          <p class="ls-body">I earned my degree in a field I'm genuinely passionate about. Every course had a purpose — I wasn't studying for a diploma; I was building a foundation for my future.</p>
+          <p class="ls-body">The discipline I built getting there? That lives with me every single day.</p>
+        </div>
+      </section>
+
+      <!-- ── CAREER ── -->
+      <section class="ls" data-stage="4" id="s-career">
+        <div class="ls-inner">
+          <span class="ls-num">07</span>
+          <h2 class="ls-title">My Career</h2>
+          <h3 class="ls-subtitle">Putting It All Into Practice</h3>
+          <p class="ls-body">After school came the real world — and I hit the ground running. I've built a career that reflects my values: meaningful work, dependability, and continuous growth every day.</p>
+          <p class="ls-body">The people I've worked with would describe me as driven, reliable, and someone who genuinely delivers.</p>
+          <div class="chip-row">
+            <span class="chip">💡 Problem solver</span>
+            <span class="chip">📈 Growth mindset</span>
+            <span class="chip">🛠 Builder</span>
+          </div>
+          <div class="photo-slots">
+            <div class="photo-slot" data-label="At work">💼</div>
+            <div class="photo-slot small" data-label="Proud moment">🏆</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TODAY ── -->
+      <section class="ls" data-stage="4" id="s-today">
+        <div class="ls-inner">
+          <span class="ls-num">08</span>
+          <h2 class="ls-title">Right Now</h2>
+          <h3 class="ls-subtitle">Where I Am Today</h3>
+          <div class="today-grid">
+            <div class="today-card">
+              <div class="tc-icon">🌱</div>
+              <h4>Always Growing</h4>
+              <p>Still learning, still building, still pushing myself forward every single day.</p>
+            </div>
+            <div class="today-card">
+              <div class="tc-icon">💼</div>
+              <h4>Career Focused</h4>
+              <p>Working in a field I love, with goals that keep me motivated and excited.</p>
+            </div>
+            <div class="today-card">
+              <div class="tc-icon">🏠</div>
+              <h4>Family First</h4>
+              <p>My roots keep me grounded. Family will always be the priority, no matter what.</p>
+            </div>
+            <div class="today-card">
+              <div class="tc-icon">🌍</div>
+              <h4>Big Dreams</h4>
+              <p>The best chapters of this story are still being written — and I'm excited for them.</p>
+            </div>
+          </div>
+          <div class="photo-slots three">
+            <div class="photo-slot" data-label="Me, right now">😊</div>
+            <div class="photo-slot" data-label="Current adventures">🌟</div>
+            <div class="photo-slot" data-label="What's next">🚀</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <p class="footer-main">Thank you for taking the time to learn about me. 🙏</p>
+          <p class="footer-sub">Made with care &amp; a whole lot of heart ♥</p>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
