@@ -129,6 +129,22 @@ body:has(.photo-slot:hover) #cur-ring {
   display: flex; flex-direction: column;
 }
 
+.hero-greeting {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 700;
+  color: var(--burg);
+  line-height: 1.15;
+  margin-bottom: 28px;
+}
+
+.hero-intro {
+  font-size: 1.05rem; font-weight: 300;
+  line-height: 1.7;
+  color: var(--mid);
+  max-width: 460px;
+}
+
 .hero-meta {
   font-size: 1rem; font-weight: 300;
   letter-spacing: 0.18em;
