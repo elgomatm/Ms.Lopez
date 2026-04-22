@@ -1,6 +1,109 @@
 'use strict';
 
 /* ══════════════════════════════════════════════
+   SHARE PAGE GENERATOR
+   Bakes photos into a self-contained HTML file
+   so Ms. Lopes sees everything without upload UI
+══════════════════════════════════════════════ */
+function updateShareBtn() {
+  const wrap = document.getElementById('share-btn-wrap');
+  if (!wrap) return;
+  const hasPhotos = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i))
+    .some(k => k && k.startsWith('photo__'));
+  wrap.classList.toggle('visible', hasPhotos);
+}
+
+async function generateSharePage() {
+  const btn = document.getElementById('share-btn');
+  const txt = document.querySelector('.share-text');
+  if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Generating…'; }
+
+  /* Snapshot body HTML — uploaded photos are already embedded as <img src="data:..."> */
+  let bodyHtml = document.body.innerHTML;
+
+  /* Strip animation 'in' classes so scroll reveals replay for Ms. Lopes */
+  bodyHtml = bodyHtml.replace(/(\bclass="[^"]*)\bin\b\s?/g, '$1');
+
+  /* Remove edit-only elements */
+  bodyHtml = bodyHtml
+    .replace(/\s*<div[^>]+id="cur-dot"[^>]*><\/div>/g, '')
+    .replace(/\s*<div[^>]+id="cur-ring"[^>]*><\/div>/g, '')
+    .replace(/\s*<div[^>]+id="share-btn-wrap"[^>]*>[\s\S]*?<\/div>\s*/g, '')
+    .replace(/\s*<script src="script\.js"><\/script>/g, '');
+
+  /* Fetch and inline the CSS */
+  let css = '';
+  try { const r = await fetch('style.css'); css = await r.text(); } catch (_) {}
+
+  /* View-only overrides */
+  const viewCss = `
+    #cur-dot,#cur-ring{display:none!important}
+    body{cursor:default!important}
+    .photo-slot{cursor:default!important;pointer-events:none!important}
+    .photo-slot:not(.has-photo){display:none!important}
+  `;
+
+  /* Minimal self-contained script for the share page */
+  const viewScript = `
+'use strict';
+function slotRot(l){const a=[-2.1,1.8,-1.2,2.4,-0.8,1.5,-2.6,0.9,-1.7,2.0];let h=0;for(let i=0;i<l.length;i++)h=(h*31+l.charCodeAt(i))>>>0;return a[h%a.length];}
+document.querySelectorAll('.photo-slot.has-photo').forEach(s=>{
+  const rot=slotRot(s.dataset.label||'');
+  s.style.setProperty('--rot',rot+'deg');
+  s.style.transform='rotate('+rot+'deg)';
+  s.addEventListener('mousemove',e=>{const r=s.getBoundingClientRect(),dx=(e.clientX-r.left-r.width/2)/(r.width/2),dy=(e.clientY-r.top-r.height/2)/(r.height/2);s.style.transform='rotate(0deg) translateY(-8px) scale(1.03) rotateY('+(dx*5)+'deg) rotateX('+(-dy*5)+'deg)';});
+  s.addEventListener('mouseleave',()=>{s.style.transform='rotate('+rot+'deg)';});
+});
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});},{threshold:0.05});
+document.querySelectorAll('.reveal-up,.reveal-left,.reveal-right,.reveal-heading,.reveal-scale').forEach(el=>obs.observe(el));
+setTimeout(()=>{document.querySelectorAll('#hero .reveal-heading,#hero .reveal-up,#hero .reveal-scale').forEach(el=>el.classList.add('in'));},100);
+const CHR='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function scramble(el){if(el.dataset.scrambled)return;el.dataset.scrambled='1';const orig=el.textContent.trim();let it=0;const iv=setInterval(()=>{el.textContent=orig.split('').map((c,i)=>{if(c===' ')return ' ';if(i<it)return orig[i];return CHR[Math.floor(Math.random()*CHR.length)];}).join('');it+=0.4;if(it>=orig.length){el.textContent=orig;clearInterval(iv);}},28);}
+const sobs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){scramble(e.target);sobs.unobserve(e.target);}});},{threshold:0.3});
+document.querySelectorAll('.scramble').forEach(el=>sobs.observe(el));
+const bar=document.getElementById('progress-bar'),nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;if(bar)bar.style.width=Math.min(p,100)+'%';if(nav)nav.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
+const sdots=document.querySelectorAll('.side-dot'),sids=['hero','family','background','sports','college','switch','exotics'];
+function upNav(){let c='hero';sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-window.innerHeight/2)c=id;});sdots.forEach(d=>d.classList.toggle('active',d.getAttribute('href')==='#'+c));}
+window.addEventListener('scroll',upNav,{passive:true});upNav();
+const bgt=document.querySelector('.hero-bg-text'),pw=document.querySelector('.hero-photo-wrap');
+window.addEventListener('scroll',()=>{const y=window.scrollY;if(bgt)bgt.style.transform='translateX('+(y*.18)+'px) translateY('+(y*.12)+'px)';if(pw)pw.style.transform='translateY('+(y*.14)+'px)';},{passive:true});
+document.querySelectorAll('.stag').forEach((t,i)=>{t.style.transitionDelay=i*.07+'s';});
+  `.trim();
+
+  const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malik Elgomati \u2014 For Ms. Lopes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+  <style>${css}</style>
+  <style>${viewCss}</style>
+</head>
+<body>${bodyHtml}
+<script>${viewScript}<\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'share.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+
+  if (btn) {
+    if (txt) txt.textContent = '✓ Downloaded!';
+    setTimeout(() => { btn.disabled = false; if (txt) txt.textContent = 'Create Share Page'; }, 3500);
+  }
+}
+
+/* ══════════════════════════════════════════════
    CURSOR
 ══════════════════════════════════════════════ */
 const dot  = document.getElementById('cur-dot');
@@ -175,6 +278,7 @@ document.querySelectorAll('.photo-slot').forEach(slot => {
   const key   = 'photo__' + (slot.dataset.label || slot.className);
   const saved = localStorage.getItem(key);
   if (saved) applyPhoto(slot, saved);
+  updateShareBtn();
 
   slot.addEventListener('click', () => {
     const inp    = document.createElement('input');
@@ -187,6 +291,7 @@ document.querySelectorAll('.photo-slot').forEach(slot => {
       reader.onload = ev => {
         applyPhoto(slot, ev.target.result);
         try { localStorage.setItem(key, ev.target.result); } catch (_) {}
+        updateShareBtn();
       };
       reader.readAsDataURL(file);
     };

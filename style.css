@@ -843,6 +843,51 @@ body:has(a:hover) #cur-ring {
 .reveal-scale.in { opacity: 1; transform: none; }
 
 /* ══════════════════════════════════════════════
+   SHARE BUTTON (fixed bottom-right, shows after photos uploaded)
+══════════════════════════════════════════════ */
+#share-btn-wrap {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  z-index: 500;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+}
+#share-btn-wrap.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#share-btn {
+  display: flex; align-items: center; gap: 9px;
+  background: #fff;
+  color: var(--bg);
+  border: none;
+  border-radius: 100px;
+  padding: 14px 22px;
+  font-family: var(--sans);
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
+  transition: transform 0.25s var(--spring), box-shadow 0.25s;
+}
+#share-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.28);
+}
+#share-btn:disabled { opacity: 0.6; transform: none; cursor: wait; }
+.share-icon { font-size: 1rem; }
+.share-hint {
+  font-size: 0.62rem; letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.45);
+  text-align: right;
+  max-width: 200px; line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════════════ */
 @media (max-width: 960px) {
