@@ -14,19 +14,32 @@
   <div id="cur-ring"></div>
   <div id="progress-bar"></div>
 
+  <!-- Side nav dots -->
+  <nav id="side-nav">
+    <a href="#hero"       class="side-dot" data-label="Hello"></a>
+    <a href="#family"     class="side-dot" data-label="Family"></a>
+    <a href="#background" class="side-dot" data-label="Background"></a>
+    <a href="#sports"     class="side-dot" data-label="Sports"></a>
+    <a href="#college"    class="side-dot" data-label="College"></a>
+    <a href="#switch"     class="side-dot" data-label="The Switch"></a>
+    <a href="#exotics"    class="side-dot" data-label="Today"></a>
+  </nav>
+
   <nav id="nav">
     <span class="nav-name">MALIK ELGOMATI</span>
     <span class="nav-note">A note for Ms. Lopes</span>
   </nav>
 
-  <!-- HERO -->
-  <section id="hero">
+  <!-- ═══════════ HERO ═══════════ -->
+  <section id="hero" data-sec-id="hero">
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
     <div class="hero-bg-text" aria-hidden="true">MALIK</div>
     <div class="hero-content">
       <h1 class="hero-greeting reveal-line" style="--d:0.05s">Hello, Ms. Lopes.</h1>
-      <p class="hero-intro reveal-up" style="--d:0.30s">My name is Malik Elgomati and I designed this page in hopes you learn a little bit about me.</p>
+      <p class="hero-intro reveal-up" style="--d:0.35s">My name is Malik Elgomati and I designed this page in hopes you learn a little bit about me.</p>
     </div>
-    <div class="hero-photo-wrap reveal-scale" style="--d:0.18s">
+    <div class="hero-photo-wrap reveal-scale" style="--d:0.2s">
       <div class="photo-slot hero-slot" data-label="Your photo">
         <span class="slot-icon">+</span>
         <span class="slot-label">Your photo</span>
@@ -38,139 +51,206 @@
     </div>
   </section>
 
-  <!-- FAMILY / ELDEST -->
-  <section class="sec" id="family" data-sec="01">
+  <!-- ═══════════ FAMILY ═══════════ -->
+  <section class="sec" id="family" data-sec="01" data-sec-id="family">
     <div class="sec-ghost" aria-hidden="true">01</div>
     <div class="sec-layout">
       <div class="sec-left">
         <p class="sec-tag reveal-up">Family</p>
-        <h2 class="sec-heading reveal-up" style="--d:0.08s">The Elgomatis</h2>
+        <h2 class="sec-heading scramble reveal-line" style="--d:0.08s">The Elgomatis</h2>
         <ul class="bullets">
-          <li class="reveal-up" style="--d:0.12s">Oldest of three loving siblings — we talk on the phone pretty much every single day.</li>
-          <li class="reveal-up" style="--d:0.18s">A sister two years younger who somehow always has her life more together than mine.</li>
-          <li class="reveal-up" style="--d:0.24s">A little brother eight years younger who I still think of as a kid even though he's not.</li>
+          <li class="reveal-left" style="--d:0.12s">Oldest of three loving siblings — we talk on the phone pretty much every single day.</li>
+          <li class="reveal-left" style="--d:0.22s">My sister, two years younger, graduated from CU Denver as an Engineering major and is now working as a Software Engineer — and getting married to her fiancé, which honestly still feels surreal. She's the one who's quietly kept a good head on my brother's and my shoulders our whole lives.</li>
+          <li class="reveal-left" style="--d:0.32s">My little brother, eight years younger, is currently studying Engineering at Brown University — still hard to believe sometimes.</li>
         </ul>
       </div>
       <div class="sec-right">
-        <div class="photo-slot reveal-scale" style="--d:0.10s" data-label="Family photo">
-          <span class="slot-icon">+</span>
-          <span class="slot-label">Family photo</span>
+        <div class="photo-slot reveal-scale" style="--d:0.12s" data-label="Family">
+          <span class="slot-icon">+</span><span class="slot-label">Family</span>
         </div>
-        <div class="photo-slot sm reveal-scale" style="--d:0.22s" data-label="Siblings">
-          <span class="slot-icon">+</span>
-          <span class="slot-label">Siblings</span>
+        <div class="photo-slot sm reveal-scale" style="--d:0.24s" data-label="Sister">
+          <span class="slot-icon">+</span><span class="slot-label">Sister</span>
+        </div>
+        <div class="photo-slot sm reveal-scale" style="--d:0.36s" data-label="Brother">
+          <span class="slot-icon">+</span><span class="slot-label">Brother</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- DENVER / BACKGROUND -->
-  <section class="sec alt" id="background" data-sec="02">
+  <!-- ═══════════ BACKGROUND ═══════════ -->
+  <section class="sec alt" id="background" data-sec="02" data-sec-id="background">
     <div class="sec-ghost" aria-hidden="true">02</div>
     <div class="sec-layout rev">
       <div class="sec-right">
-        <div class="photo-slot lg reveal-scale" style="--d:0.06s" data-label="Growing up in Denver">
-          <span class="slot-icon">+</span>
-          <span class="slot-label">Denver</span>
+        <div class="photo-slot lg reveal-scale" style="--d:0.08s" data-label="Denver">
+          <span class="slot-icon">+</span><span class="slot-label">Denver</span>
+        </div>
+        <div class="photo-slot sm reveal-scale" style="--d:0.22s" data-label="Libya / Family">
+          <span class="slot-icon">+</span><span class="slot-label">Libya / Family</span>
         </div>
       </div>
       <div class="sec-left">
         <p class="sec-tag reveal-up">Background</p>
-        <h2 class="sec-heading reveal-up" style="--d:0.08s">Denver, Colorado</h2>
+        <h2 class="sec-heading scramble reveal-line" style="--d:0.08s">Denver, Colorado</h2>
         <ul class="bullets">
-          <li class="reveal-up" style="--d:0.12s">Raised in Denver by a Libyan mom and dad who migrated here in the 70s with nothing but each other.</li>
-          <li class="reveal-up" style="--d:0.18s">Grew up speaking Arabic at home before English — it was just how things were.</li>
-          <li class="reveal-up" style="--d:0.24s">Mom has been shaping little kids' lives as an elementary school teacher for as long as I can remember.</li>
-          <li class="reveal-up" style="--d:0.30s">Dad started on the dealership floor at Honda and worked his way up to manager over decades.</li>
+          <li class="reveal-right" style="--d:0.14s">Raised in Denver by a Libyan mom and dad who left their life behind in Libya to ensure my siblings and I had the best opportunities to become successful.</li>
+          <li class="reveal-right" style="--d:0.24s">Arabic was our first language at home — we made very frequent trips back to Libya to visit family and make sure we held onto our culture and community.</li>
+          <li class="reveal-right" style="--d:0.34s">Mom has been shaping little kids' lives as an elementary school teacher for as long as I can remember.</li>
+          <li class="reveal-right" style="--d:0.44s">Dad started on the dealership floor at Honda and worked his way up to manager over the years.</li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- SPORTS -->
-  <section class="sec" id="sports" data-sec="03">
+  <!-- ═══════════ SPORTS ═══════════ -->
+  <section class="sec" id="sports" data-sec="03" data-sec-id="sports">
     <div class="sec-ghost" aria-hidden="true">03</div>
     <div class="sec-single">
       <div class="sec-top-row">
         <div>
           <p class="sec-tag reveal-up">High School</p>
-          <h2 class="sec-heading reveal-up" style="--d:0.08s">Sports</h2>
+          <h2 class="sec-heading scramble reveal-line" style="--d:0.08s">Sports</h2>
         </div>
-        <div class="sport-tags reveal-up" style="--d:0.16s">
+        <div class="sport-tags reveal-up" style="--d:0.18s">
           <span class="stag">Soccer</span>
           <span class="stag">Football</span>
         </div>
       </div>
-      <div class="sec-body-row">
-        <p class="sec-body reveal-up" style="--d:0.20s">Playing competitive sports through high school did something to the way I see the body — not just as an athlete, but as someone genuinely curious about how it holds up and why it breaks down.</p>
+      <p class="sec-body reveal-up" style="--d:0.22s">Playing competitive sports through high school did something to the way I see the body — not just as an athlete, but as someone genuinely curious about how it holds up and why it breaks down.</p>
+      <div class="callout reveal-scale" style="--d:0.28s">
+        <span class="callout-label">Fun Fact</span>
+        <p>Over the years I broke both elbows, both collar bones, and both wrists playing different sports. Rather than scaring me off, it only made me want to be on the other side of those emergency visits — the one providing the care.</p>
       </div>
       <div class="photo-grid">
-        <div class="photo-slot grid-slot reveal-scale" style="--d:0.06s" data-label="Soccer">
+        <div class="photo-slot grid-slot reveal-scale" style="--d:0.08s" data-label="Soccer">
           <span class="slot-icon">+</span><span class="slot-label">Soccer</span>
         </div>
-        <div class="photo-slot grid-slot tall reveal-scale" style="--d:0.14s" data-label="Football">
+        <div class="photo-slot grid-slot tall reveal-scale" style="--d:0.18s" data-label="Football">
           <span class="slot-icon">+</span><span class="slot-label">Football</span>
         </div>
-        <div class="photo-slot grid-slot reveal-scale" style="--d:0.22s" data-label="Team">
+        <div class="photo-slot grid-slot reveal-scale" style="--d:0.28s" data-label="Team">
           <span class="slot-icon">+</span><span class="slot-label">Team</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- COLLEGE / BIO -->
-  <section class="sec alt" id="college" data-sec="04">
+  <!-- ═══════════ COLLEGE ═══════════ -->
+  <section class="sec alt" id="college" data-sec="04" data-sec-id="college">
     <div class="sec-ghost" aria-hidden="true">04</div>
     <div class="sec-layout">
       <div class="sec-left">
         <p class="sec-tag reveal-up">College</p>
-        <h2 class="sec-heading reveal-up" style="--d:0.08s">Biology</h2>
+        <h2 class="sec-heading scramble reveal-line" style="--d:0.08s">Biology</h2>
         <ul class="bullets">
-          <li class="reveal-up" style="--d:0.12s">Majored in Biology — it felt like the natural extension of years spent caring about the body.</li>
-          <li class="reveal-up" style="--d:0.18s">Went pre-med and actually completed clinical rounds, which taught me a lot about what medicine really looks like up close.</li>
-          <li class="reveal-up" style="--d:0.24s">Got far enough to know it wasn't the path — and that that's okay.</li>
+          <li class="reveal-left" style="--d:0.14s">Majored in Biology — a natural extension of years spent genuinely caring about how the body works.</li>
+          <li class="reveal-left" style="--d:0.24s">Clinical experience included working as a medical assistant, dental assistant, and lab technician.</li>
+          <li class="reveal-left" style="--d:0.34s">Went pre-med and completed full clinical rounds, which showed me exactly what medicine looks like up close.</li>
+          <li class="reveal-left" style="--d:0.44s">Made it to about junior year before the bureaucracy and the structure of the US medical system had me seriously questioning whether it was worth navigating just to do the one thing I actually wanted — provide care.</li>
         </ul>
       </div>
       <div class="sec-right">
-        <div class="photo-slot lg reveal-scale" style="--d:0.10s" data-label="Campus">
-          <span class="slot-icon">+</span>
-          <span class="slot-label">Campus</span>
+        <div class="photo-slot reveal-scale" style="--d:0.12s" data-label="Campus">
+          <span class="slot-icon">+</span><span class="slot-label">Campus</span>
+        </div>
+        <div class="photo-slot sm reveal-scale" style="--d:0.24s" data-label="Clinical">
+          <span class="slot-icon">+</span><span class="slot-label">Clinical</span>
+        </div>
+        <div class="photo-slot sm reveal-scale" style="--d:0.36s" data-label="Lab">
+          <span class="slot-icon">+</span><span class="slot-label">Lab</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- THE SWITCH -->
-  <section class="sec" id="switch" data-sec="05">
+  <!-- ═══════════ THE SWITCH ═══════════ -->
+  <section class="sec" id="switch" data-sec="05" data-sec-id="switch">
     <div class="sec-ghost" aria-hidden="true">05</div>
     <div class="sec-layout rev">
       <div class="sec-right">
-        <div class="photo-slot lg reveal-scale" style="--d:0.06s" data-label="Today">
-          <span class="slot-icon">+</span>
-          <span class="slot-label">Today</span>
+        <div class="photo-slot lg reveal-scale" style="--d:0.08s" data-label="The PC Build">
+          <span class="slot-icon">+</span><span class="slot-label">The PC Build</span>
         </div>
-        <div class="photo-slot sm reveal-scale" style="--d:0.18s" data-label="Work">
-          <span class="slot-icon">+</span>
-          <span class="slot-label">Work</span>
+        <div class="photo-slot sm reveal-scale" style="--d:0.20s" data-label="Cognizant">
+          <span class="slot-icon">+</span><span class="slot-label">Cognizant</span>
+        </div>
+        <div class="photo-slot sm reveal-scale" style="--d:0.32s" data-label="Gaming Setup">
+          <span class="slot-icon">+</span><span class="slot-label">Gaming Setup</span>
         </div>
       </div>
       <div class="sec-left">
-        <p class="sec-tag reveal-up">Today</p>
-        <h2 class="sec-heading reveal-up" style="--d:0.08s">The Switch</h2>
+        <p class="sec-tag reveal-up">The Pivot</p>
+        <h2 class="sec-heading scramble reveal-line" style="--d:0.08s">The Switch</h2>
         <ul class="bullets">
-          <li class="reveal-up" style="--d:0.12s">Made the choice to step away from medicine — not an easy one, but an honest one.</li>
-          <li class="reveal-up" style="--d:0.18s">Found myself drawn to computer science in a way that felt less like a plan and more like a pull.</li>
-          <li class="reveal-up" style="--d:0.24s">Still early in tech, but showing up every day and figuring it out.</li>
+          <li class="reveal-right" style="--d:0.14s">During COVID I built my own PC — and it changed everything. I'd gamed my whole life, so engineering felt surprisingly natural.</li>
+          <li class="reveal-right" style="--d:0.24s">It changed the lens through which I viewed everything — the internet, devices, cars, anything involving tech. It felt like my eyes had been opened in a way I'd never experienced before.</li>
+          <li class="reveal-right" style="--d:0.34s">Made the decision to switch halfway through junior year and gave myself two options heading into graduation: find a Software Engineering job within 6 months — or go to medical school. I had all the prerequisites and clinical rounds done either way.</li>
+          <li class="reveal-right" style="--d:0.44s">Landed a role as an AI Software Engineer at Cognizant — and haven't looked back.</li>
         </ul>
+        <div class="callout reveal-scale" style="--d:0.50s">
+          <span class="callout-label">The Ultimatum</span>
+          <p>6 months to find a SWE job — or medical school. No in between.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ═══════════ TODAY — THE EXOTICS NETWORK ═══════════ -->
+  <section class="sec alt exotics-sec" id="exotics" data-sec="06" data-sec-id="exotics">
+    <div class="sec-ghost" aria-hidden="true">06</div>
+    <div class="exotics-header">
+      <p class="sec-tag reveal-up">Today</p>
+      <div class="exotics-title-row">
+        <h2 class="sec-heading scramble reveal-line" style="--d:0.08s">The Exotics Network</h2>
+        <span class="exotics-badge reveal-up" style="--d:0.18s">Est. 2023</span>
+      </div>
+    </div>
+    <div class="exotics-layout">
+      <div class="exotics-text">
+        <ul class="bullets">
+          <li class="reveal-up" style="--d:0.14s">Realized quickly that as comfortable as a salary might be, I wanted to directly contribute to something I owned and could grow — not answer to a boss inside a 360,000-person company.</li>
+          <li class="reveal-up" style="--d:0.24s">Co-founded The Exotics Network with a group of close friends — we host and deliver hypercar events and experiences across the country.</li>
+          <li class="reveal-up" style="--d:0.34s">In a year and a half the company has grown insanely. We've received multiple investment offers and are now looking to form a board.</li>
+          <li class="reveal-up" style="--d:0.44s">Our first international event is happening this summer — and we're looking to bring on employees by the end of the year.</li>
+          <li class="reveal-up" style="--d:0.54s">Still running both full time until the moment feels right to finally make the full leap.</li>
+        </ul>
+        <div class="stat-strip reveal-up" style="--d:0.60s">
+          <div class="stat">
+            <span class="stat-num">1.5</span>
+            <span class="stat-label">Years in</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">∞</span>
+            <span class="stat-label">Investment Offers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">1st</span>
+            <span class="stat-label">Intl. Event '25</span>
+          </div>
+        </div>
+      </div>
+      <div class="exotics-photos">
+        <div class="photo-slot exotics-slot-lg reveal-scale" style="--d:0.12s" data-label="Event">
+          <span class="slot-icon">+</span><span class="slot-label">Event</span>
+        </div>
+        <div class="exotics-slot-row">
+          <div class="photo-slot exotics-slot-sm reveal-scale" style="--d:0.24s" data-label="The Cars">
+            <span class="slot-icon">+</span><span class="slot-label">The Cars</span>
+          </div>
+          <div class="photo-slot exotics-slot-sm reveal-scale" style="--d:0.36s" data-label="The Team">
+            <span class="slot-icon">+</span><span class="slot-label">The Team</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
   <footer id="footer">
     <div class="footer-inner">
       <p class="footer-line reveal-up">Thank you for taking the time.</p>
-      <p class="footer-sig reveal-up" style="--d:0.12s">Ms. Lopes.</p>
+      <p class="footer-sig reveal-up" style="--d:0.14s">Ms. Lopes.</p>
     </div>
   </footer>
 

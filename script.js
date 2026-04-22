@@ -1,6 +1,8 @@
 'use strict';
 
-/* ── Custom cursor ── */
+/* ══════════════════════════════════════════════
+   CURSOR
+══════════════════════════════════════════════ */
 const dot  = document.getElementById('cur-dot');
 const ring = document.getElementById('cur-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
@@ -9,13 +11,15 @@ document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; })
 
 (function tickCursor() {
   requestAnimationFrame(tickCursor);
-  rx += (mx - rx) * 0.14;
-  ry += (my - ry) * 0.14;
+  rx += (mx - rx) * 0.13;
+  ry += (my - ry) * 0.13;
   dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
   ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
 })();
 
-/* ── Progress bar ── */
+/* ══════════════════════════════════════════════
+   PROGRESS BAR + TOP NAV
+══════════════════════════════════════════════ */
 const bar = document.getElementById('progress-bar');
 const nav = document.getElementById('nav');
 
@@ -25,7 +29,32 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 60);
 }, { passive: true });
 
-/* ── Reveal on scroll (IntersectionObserver) ── */
+/* ══════════════════════════════════════════════
+   SIDE NAV — active dot tracking
+══════════════════════════════════════════════ */
+const sideDots = document.querySelectorAll('.side-dot');
+const secIds   = ['hero', 'family', 'background', 'sports', 'college', 'switch', 'exotics'];
+
+function updateSideNav() {
+  let currentId = 'hero';
+  for (const id of secIds) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (window.scrollY >= el.offsetTop - window.innerHeight / 2) currentId = id;
+  }
+  sideDots.forEach(dot => {
+    const href = dot.getAttribute('href').replace('#', '');
+    dot.classList.toggle('active', href === currentId);
+  });
+}
+window.addEventListener('scroll', updateSideNav, { passive: true });
+updateSideNav();
+
+/* ══════════════════════════════════════════════
+   REVEAL ON SCROLL (IntersectionObserver)
+══════════════════════════════════════════════ */
+const revealClasses = ['.reveal-up', '.reveal-left', '.reveal-right', '.reveal-line', '.reveal-scale'];
+
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -33,54 +62,88 @@ const revealObserver = new IntersectionObserver(entries => {
       revealObserver.unobserve(e.target);
     }
   });
-}, { threshold: 0.12 });
+}, { threshold: 0.10 });
 
-document.querySelectorAll('.reveal-up, .reveal-line, .reveal-scale')
+document.querySelectorAll(revealClasses.join(', '))
   .forEach(el => revealObserver.observe(el));
 
-/* ── Hero line reveals fire immediately ── */
+/* Hero fires immediately */
 setTimeout(() => {
-  document.querySelectorAll('.reveal-line').forEach(el => el.classList.add('in'));
-  document.querySelectorAll('#hero .reveal-up, #hero .reveal-scale')
+  document.querySelectorAll('#hero .reveal-line, #hero .reveal-up, #hero .reveal-scale')
     .forEach(el => el.classList.add('in'));
-}, 100);
+}, 120);
 
-/* ── Parallax on hero bg text ── */
-const heroBg = document.querySelector('.hero-bg-text');
+/* ══════════════════════════════════════════════
+   SCRAMBLE TEXT on section headings
+══════════════════════════════════════════════ */
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+function scramble(el) {
+  if (el.dataset.scrambled) return;
+  el.dataset.scrambled = '1';
+  const original = el.textContent.trim();
+  let iter = 0;
+  const interval = setInterval(() => {
+    el.textContent = original.split('').map((ch, i) => {
+      if (ch === ' ') return ' ';
+      if (i < iter)  return original[i];
+      return CHARS[Math.floor(Math.random() * CHARS.length)];
+    }).join('');
+    iter += 0.4;
+    if (iter >= original.length) {
+      el.textContent = original;
+      clearInterval(interval);
+    }
+  }, 28);
+}
+
+const scrambleObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      scramble(e.target);
+      scrambleObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.scramble').forEach(el => scrambleObserver.observe(el));
+
+/* ══════════════════════════════════════════════
+   PARALLAX — hero bg text + photo wrap
+══════════════════════════════════════════════ */
+const heroBgText    = document.querySelector('.hero-bg-text');
 const heroPhotoWrap = document.querySelector('.hero-photo-wrap');
 
 window.addEventListener('scroll', () => {
   const y = window.scrollY;
-  if (heroBg)       heroBg.style.transform       = `translateY(${y * 0.3}px)`;
-  if (heroPhotoWrap) heroPhotoWrap.style.transform = `translateY(${y * 0.15}px)`;
+  if (heroBgText)    heroBgText.style.transform    = `translateX(${y * 0.18}px) translateY(${y * 0.12}px)`;
+  if (heroPhotoWrap) heroPhotoWrap.style.transform = `translateY(${y * 0.14}px)`;
 }, { passive: true });
 
-/* ── Magnetic hover on nav name ── */
+/* ══════════════════════════════════════════════
+   MAGNETIC NAV NAME
+══════════════════════════════════════════════ */
 const navName = document.querySelector('.nav-name');
 if (navName) {
   navName.addEventListener('mousemove', e => {
-    const r = navName.getBoundingClientRect();
-    const dx = (e.clientX - r.left - r.width/2)  * 0.22;
-    const dy = (e.clientY - r.top  - r.height/2) * 0.22;
+    const r  = navName.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width  / 2) * 0.2;
+    const dy = (e.clientY - r.top  - r.height / 2) * 0.2;
     navName.style.transform = `translate(${dx}px, ${dy}px)`;
   });
   navName.addEventListener('mouseleave', () => { navName.style.transform = ''; });
 }
 
-/* ── Section active tracking (dot/line indicator could go here) ── */
-const sections = document.querySelectorAll('section[data-sec]');
-const secObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      document.querySelectorAll('.sec-ghost').forEach(g => g.style.opacity = '');
-      const ghost = e.target.querySelector('.sec-ghost');
-      if (ghost) ghost.style.opacity = '0.06';
-    }
-  });
-}, { threshold: 0.4 });
-sections.forEach(s => secObserver.observe(s));
+/* ══════════════════════════════════════════════
+   STAGGER sport tags on entry
+══════════════════════════════════════════════ */
+document.querySelectorAll('.stag').forEach((t, i) => {
+  t.style.transitionDelay = `${i * 0.07}s`;
+});
 
-/* ── Photo slot click-to-upload ── */
+/* ══════════════════════════════════════════════
+   PHOTO SLOT — click to upload + localStorage
+══════════════════════════════════════════════ */
 function applyPhoto(slot, dataUrl) {
   slot.style.backgroundImage    = `url(${dataUrl})`;
   slot.style.backgroundSize     = 'cover';
@@ -91,27 +154,41 @@ function applyPhoto(slot, dataUrl) {
 }
 
 document.querySelectorAll('.photo-slot').forEach(slot => {
-  const key = 'photo__' + (slot.dataset.label || slot.dataset.slot || slot.className);
+  const key   = 'photo__' + (slot.dataset.label || slot.className);
   const saved = localStorage.getItem(key);
   if (saved) applyPhoto(slot, saved);
 
   slot.addEventListener('click', () => {
-    const inp = document.createElement('input');
-    inp.type = 'file'; inp.accept = 'image/*';
+    const inp    = document.createElement('input');
+    inp.type     = 'file';
+    inp.accept   = 'image/*';
     inp.onchange = e => {
-      const f = e.target.files[0]; if (!f) return;
-      const r = new FileReader();
-      r.onload = ev => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
         applyPhoto(slot, ev.target.result);
         try { localStorage.setItem(key, ev.target.result); } catch (_) {}
       };
-      r.readAsDataURL(f);
+      reader.readAsDataURL(file);
     };
     inp.click();
   });
 });
 
-/* ── Stagger sport tags ── */
-document.querySelectorAll('.stag').forEach((t, i) => {
-  t.style.transitionDelay = `${i * 0.06}s`;
+/* ══════════════════════════════════════════════
+   TILT effect on photo slots with photos
+══════════════════════════════════════════════ */
+document.querySelectorAll('.photo-slot').forEach(slot => {
+  slot.addEventListener('mousemove', e => {
+    if (!slot.classList.contains('has-photo')) return;
+    const r   = slot.getBoundingClientRect();
+    const dx  = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+    const dy  = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+    slot.style.transform = `translateY(-8px) scale(1.02) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg)`;
+  });
+  slot.addEventListener('mouseleave', () => {
+    if (!slot.classList.contains('has-photo')) return;
+    slot.style.transform = '';
+  });
 });
