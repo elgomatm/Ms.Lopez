@@ -81,7 +81,20 @@ const secObserver = new IntersectionObserver(entries => {
 sections.forEach(s => secObserver.observe(s));
 
 /* ── Photo slot click-to-upload ── */
+function applyPhoto(slot, dataUrl) {
+  slot.style.backgroundImage    = `url(${dataUrl})`;
+  slot.style.backgroundSize     = 'cover';
+  slot.style.backgroundPosition = 'center';
+  slot.classList.add('has-photo');
+  slot.querySelector('.slot-icon')?.remove();
+  slot.querySelector('.slot-label')?.remove();
+}
+
 document.querySelectorAll('.photo-slot').forEach(slot => {
+  const key = 'photo__' + (slot.dataset.label || slot.dataset.slot || slot.className);
+  const saved = localStorage.getItem(key);
+  if (saved) applyPhoto(slot, saved);
+
   slot.addEventListener('click', () => {
     const inp = document.createElement('input');
     inp.type = 'file'; inp.accept = 'image/*';
@@ -89,12 +102,8 @@ document.querySelectorAll('.photo-slot').forEach(slot => {
       const f = e.target.files[0]; if (!f) return;
       const r = new FileReader();
       r.onload = ev => {
-        slot.style.backgroundImage    = `url(${ev.target.result})`;
-        slot.style.backgroundSize     = 'cover';
-        slot.style.backgroundPosition = 'center';
-        slot.style.border             = '2px solid rgba(92,0,24,0.3)';
-        slot.querySelector('.slot-icon')?.remove();
-        slot.querySelector('.slot-label')?.remove();
+        applyPhoto(slot, ev.target.result);
+        try { localStorage.setItem(key, ev.target.result); } catch (_) {}
       };
       r.readAsDataURL(f);
     };

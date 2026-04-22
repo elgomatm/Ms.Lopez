@@ -1,17 +1,16 @@
 /* ══════════════════════════════════════════════
-   MALIK ELGOMATI — Professional Personal Site
-   Clean, minimal, photo-forward, dynamically animated
+   MALIK ELGOMATI — Personal Site for Ms. Lopes
+   Bright red background, white text
 ══════════════════════════════════════════════ */
 :root {
-  --cream:   #F9F6F2;
+  --bg:      #CC1122;
+  --bg-alt:  #B80F1D;
   --white:   #FFFFFF;
-  --burg:    #5C0018;
-  --burg-m:  #8B1A2A;
-  --red:     #B01C2E;
-  --ink:     #0A0A0A;
-  --mid:     #4A4A4A;
-  --muted:   #9A9A9A;
-  --border:  rgba(92,0,24,0.12);
+  --ink:     #FFFFFF;
+  --mid:     rgba(255,255,255,0.88);
+  --muted:   rgba(255,255,255,0.52);
+  --border:  rgba(255,255,255,0.18);
+  --accent:  rgba(255,255,255,0.22);
 
   --display: 'Bebas Neue', sans-serif;
   --sans:    'Inter', system-ui, sans-serif;
@@ -25,7 +24,7 @@
 html { scroll-behavior: smooth; }
 body {
   font-family: var(--sans);
-  background: var(--cream);
+  background: var(--bg);
   color: var(--ink);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -36,7 +35,7 @@ body {
 #cur-dot {
   position: fixed; z-index: 9999;
   width: 6px; height: 6px;
-  background: var(--burg);
+  background: #fff;
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
@@ -45,7 +44,7 @@ body {
 #cur-ring {
   position: fixed; z-index: 9998;
   width: 32px; height: 32px;
-  border: 1.5px solid rgba(92,0,24,0.45);
+  border: 1.5px solid rgba(255,255,255,0.5);
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
@@ -56,17 +55,17 @@ body:has(a:hover) #cur-ring,
 body:has(button:hover) #cur-ring,
 body:has(.photo-slot:hover) #cur-ring {
   width: 52px; height: 52px;
-  border-color: var(--burg);
+  border-color: #fff;
 }
 
 /* ── Progress bar ── */
 #progress-bar {
   position: fixed; top: 0; left: 0;
   height: 2px; width: 0%;
-  background: linear-gradient(90deg, var(--burg), var(--red));
+  background: linear-gradient(90deg, rgba(255,255,255,0.6), #fff);
   z-index: 1000;
   transition: width 0.1s linear;
-  box-shadow: 0 0 8px rgba(176,28,46,0.5);
+  box-shadow: 0 0 8px rgba(255,255,255,0.4);
 }
 
 /* ── Nav ── */
@@ -75,13 +74,13 @@ body:has(.photo-slot:hover) #cur-ring {
   z-index: 100;
   display: flex; justify-content: space-between; align-items: center;
   padding: 20px 48px;
-  background: rgba(249,246,242,0.85);
+  background: rgba(180,5,20,0.88);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
   transition: border-color 0.3s, background 0.3s;
 }
 #nav.scrolled { border-color: var(--border); }
-.nav-name { font-family: var(--display); font-size: 1rem; letter-spacing: 0.15em; color: var(--burg); }
+.nav-name { font-family: var(--display); font-size: 1rem; letter-spacing: 0.15em; color: #fff; }
 .nav-note { font-size: 0.72rem; letter-spacing: 0.08em; color: var(--muted); font-style: italic; }
 
 /* ══════════════════════════════════════════════
@@ -96,7 +95,7 @@ body:has(.photo-slot:hover) #cur-ring {
   gap: 60px;
   position: relative;
   overflow: hidden;
-  background: var(--cream);
+  background: var(--bg);
 }
 
 .hero-bg-text {
@@ -104,7 +103,7 @@ body:has(.photo-slot:hover) #cur-ring {
   font-family: var(--display);
   font-size: clamp(180px, 28vw, 360px);
   letter-spacing: -0.02em;
-  color: rgba(92,0,24,0.04);
+  color: rgba(255,255,255,0.05);
   bottom: -20px; left: -20px;
   line-height: 1;
   user-select: none;
@@ -115,7 +114,7 @@ body:has(.photo-slot:hover) #cur-ring {
 .hero-tag {
   font-size: 0.68rem; font-weight: 600;
   letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--red);
+  color: rgba(255,255,255,0.65);
   margin-bottom: 24px;
 }
 
@@ -124,7 +123,7 @@ body:has(.photo-slot:hover) #cur-ring {
   font-size: clamp(5rem, 11vw, 10rem);
   letter-spacing: 0.03em;
   line-height: 0.92;
-  color: var(--ink);
+  color: #fff;
   margin-bottom: 28px;
   display: flex; flex-direction: column;
 }
@@ -133,7 +132,7 @@ body:has(.photo-slot:hover) #cur-ring {
   font-family: 'Dancing Script', cursive;
   font-size: clamp(3.5rem, 7vw, 6.5rem);
   font-weight: 700;
-  color: var(--burg);
+  color: #fff;
   line-height: 1.15;
   margin-bottom: 28px;
 }
@@ -171,14 +170,14 @@ body:has(.photo-slot:hover) #cur-ring {
 }
 .scroll-line-anim {
   width: 1px; height: 60px;
-  background: linear-gradient(to bottom, transparent, var(--burg));
+  background: linear-gradient(to bottom, transparent, #fff);
   position: relative; overflow: hidden;
 }
 .scroll-line-anim::after {
   content: '';
   position: absolute; top: -100%; left: 0;
   width: 100%; height: 100%;
-  background: linear-gradient(to bottom, var(--burg) 0%, transparent 100%);
+  background: linear-gradient(to bottom, #fff 0%, transparent 100%);
   animation: scanLine 1.8s ease-in-out infinite;
 }
 @keyframes scanLine {
@@ -193,16 +192,16 @@ body:has(.photo-slot:hover) #cur-ring {
   padding: 120px 80px;
   position: relative;
   overflow: hidden;
-  background: var(--cream);
+  background: var(--bg);
   border-top: 1px solid var(--border);
 }
-.sec.alt { background: var(--white); }
+.sec.alt { background: var(--bg-alt); }
 
 .sec-ghost {
   position: absolute;
   font-family: var(--display);
   font-size: clamp(120px, 20vw, 260px);
-  color: rgba(92,0,24,0.035);
+  color: rgba(255,255,255,0.05);
   top: -10px; right: -10px;
   line-height: 1; user-select: none; pointer-events: none;
 }
@@ -230,15 +229,21 @@ body:has(.photo-slot:hover) #cur-ring {
 .sec-tag {
   font-size: 0.65rem; font-weight: 600;
   letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--red); margin-bottom: 16px;
+  color: rgba(255,255,255,0.6); margin-bottom: 16px;
 }
 
 .sec-heading {
   font-family: var(--display);
   font-size: clamp(2.8rem, 5vw, 4.5rem);
   letter-spacing: 0.05em; line-height: 1.0;
-  color: var(--ink);
+  color: #fff;
   margin-bottom: 36px;
+}
+
+.sec-body {
+  font-size: 1.05rem; font-weight: 300;
+  line-height: 1.75;
+  color: var(--mid);
 }
 
 /* Bullets */
@@ -257,22 +262,22 @@ body:has(.photo-slot:hover) #cur-ring {
   transform: translateY(-50%);
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--red);
+  background: rgba(255,255,255,0.55);
 }
 
 /* Sport tags */
 .sport-tags { display: flex; gap: 12px; flex-wrap: wrap; }
 .stag {
   font-size: 0.8rem; font-weight: 500;
-  color: var(--burg);
-  background: rgba(92,0,24,0.06);
-  border: 1px solid rgba(92,0,24,0.15);
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.28);
   padding: 8px 18px; border-radius: 100px;
   letter-spacing: 0.04em;
   transition: all 0.22s var(--ease);
 }
 .stag:hover {
-  background: var(--burg); color: #fff;
+  background: rgba(255,255,255,0.22); color: #fff;
   transform: translateY(-2px);
 }
 
@@ -280,13 +285,13 @@ body:has(.photo-slot:hover) #cur-ring {
 .cred {
   margin-top: 32px;
   padding: 18px 24px;
-  border-left: 2px solid var(--red);
-  background: rgba(92,0,24,0.03);
+  border-left: 2px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.06);
 }
 .cred span {
   font-family: var(--display);
   font-size: 1.2rem; letter-spacing: 0.06em;
-  color: var(--burg);
+  color: #fff;
 }
 
 /* ── Photo grid ── */
@@ -302,7 +307,7 @@ body:has(.photo-slot:hover) #cur-ring {
 /* ── Photo slots ── */
 .photo-slot {
   width: 280px; height: 320px;
-  border: 1.5px dashed rgba(92,0,24,0.22);
+  border: 1.5px dashed rgba(255,255,255,0.28);
   border-radius: 16px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -310,14 +315,16 @@ body:has(.photo-slot:hover) #cur-ring {
   cursor: pointer;
   position: relative; overflow: hidden;
   transition: all 0.35s var(--ease);
-  background: rgba(92,0,24,0.018);
+  background: rgba(255,255,255,0.05);
   background-size: cover; background-position: center;
 }
 .photo-slot:hover {
-  border-color: var(--burg);
+  border-color: rgba(255,255,255,0.6);
   transform: translateY(-6px);
-  box-shadow: 0 24px 60px rgba(92,0,24,0.12);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.2);
 }
+.photo-slot.has-photo { border-color: transparent; }
+.photo-slot.has-photo:hover { border-color: rgba(255,255,255,0.4); }
 .photo-slot::after {
   content: attr(data-label);
   position: absolute; bottom: 14px; left: 0; right: 0;
@@ -325,17 +332,18 @@ body:has(.photo-slot:hover) #cur-ring {
   font-size: 0.65rem; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--muted);
 }
+.photo-slot.has-photo::after { display: none; }
 .slot-icon {
   width: 36px; height: 36px;
   border-radius: 50%;
-  border: 1.5px solid rgba(92,0,24,0.22);
+  border: 1.5px solid rgba(255,255,255,0.3);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem; color: var(--burg-m);
+  font-size: 1.1rem; color: rgba(255,255,255,0.75);
   font-weight: 300;
   transition: all 0.2s;
 }
 .photo-slot:hover .slot-icon {
-  background: var(--burg); color: #fff; border-color: var(--burg);
+  background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.6);
 }
 .slot-label {
   font-size: 0.72rem; font-weight: 500;
@@ -354,7 +362,7 @@ body:has(.photo-slot:hover) #cur-ring {
 /* ── Footer ── */
 #footer {
   padding: 140px 80px;
-  background: var(--burg);
+  background: #8B0000;
   text-align: center;
 }
 .footer-line {
