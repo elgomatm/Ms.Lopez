@@ -546,6 +546,106 @@ body:has(a:hover) #cur-ring {
 }
 
 /* ══════════════════════════════════════════════
+   CLOSING NOTE
+══════════════════════════════════════════════ */
+.closing-sec {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+.closing-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+.closing-note {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--mid);
+  margin-bottom: 28px;
+}
+.closing-sign {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════
+   LINKS
+══════════════════════════════════════════════ */
+.links-sec { background: var(--bg-alt); }
+.links-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.link-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 32px 28px;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  text-decoration: none;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s var(--ease);
+}
+.link-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.link-card:hover {
+  border-color: rgba(255,255,255,0.45);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 50px rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.09);
+}
+.link-card:hover::before { opacity: 1; }
+.link-card-icon {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  font-family: var(--sans);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.link-card-label {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  color: #fff;
+  line-height: 1;
+}
+.link-card-sub {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.link-card-arrow {
+  position: absolute;
+  top: 24px; right: 24px;
+  font-size: 1.3rem;
+  color: rgba(255,255,255,0.3);
+  transition: transform 0.3s var(--ease), color 0.3s;
+}
+.link-card:hover .link-card-arrow {
+  transform: translate(3px, -3px);
+  color: rgba(255,255,255,0.8);
+}
+
+/* ══════════════════════════════════════════════
    FOOTER
 ══════════════════════════════════════════════ */
 #footer {
@@ -646,4 +746,6 @@ body:has(a:hover) #cur-ring {
   .exotics-layout { grid-template-columns: 1fr; }
   .exotics-slot-lg { height: 240px; }
   .stat-strip { flex-direction: row; }
+  .link-cards { grid-template-columns: 1fr; }
+  .closing-inner { text-align: left; }
 }
