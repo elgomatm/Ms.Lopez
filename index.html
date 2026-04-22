@@ -292,13 +292,17 @@
     </div>
   </footer>
 
-  <!-- Share button — appears after photos are uploaded -->
+  <!-- Bottom-right panel — appears after first photo uploaded -->
   <div id="share-btn-wrap">
+    <button id="save-btn" onclick="saveAllPhotos()">
+      <span class="save-icon">↓</span>
+      <span class="save-text">Save Photos</span>
+    </button>
     <button id="share-btn" onclick="generateSharePage()">
       <span class="share-icon">↗</span>
       <span class="share-text">Create Share Page</span>
     </button>
-    <p class="share-hint">Downloads a file — upload to GitHub, then send her that link</p>
+    <p class="share-hint">Upload share.html to GitHub → send her that link</p>
   </div>
 
   <script src="script.js"></script>

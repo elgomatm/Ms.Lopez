@@ -32,12 +32,21 @@ async function generateSharePage() {
   /* Strip 'in' animation classes so every scroll reveal replays for Ms. Lopes */
   bodyHtml = bodyHtml.replace(/(\bclass="[^"]*)\bin\b\s*/g, '$1');
 
+  /* Parse snapshot into a real DOM so we can cleanly remove elements */
+  const shareDoc = new DOMParser().parseFromString(
+    `<!DOCTYPE html><html><body>${bodyHtml}</body></html>`, 'text/html'
+  );
+
+  /* Remove empty photo slots (no has-photo class) — no gaps in share page */
+  shareDoc.querySelectorAll('.photo-slot:not(.has-photo)').forEach(el => el.remove());
+
   /* Remove edit-only elements */
-  bodyHtml = bodyHtml
-    .replace(/\s*<div[^>]+id="cur-dot"[^>]*><\/div>/g, '')
-    .replace(/\s*<div[^>]+id="cur-ring"[^>]*><\/div>/g, '')
-    .replace(/\s*<div[^>]+id="share-btn-wrap"[^>]*>[\s\S]*?<\/div>\s*/g, '')
-    .replace(/\s*<script src="script\.js"><\/script>/g, '');
+  ['cur-dot', 'cur-ring', 'share-btn-wrap'].forEach(id => {
+    shareDoc.getElementById(id)?.remove();
+  });
+  shareDoc.querySelector('script[src="script.js"]')?.remove();
+
+  bodyHtml = shareDoc.body.innerHTML;
 
   /*
    * The share page links to the EXACT SAME style.css and script.js
@@ -254,6 +263,28 @@ if (VIEW_MODE) {
   document.body.classList.add('view-mode');
 } else {
   /* ── Edit mode: restore from localStorage + wire upload clicks ── */
+
+  /* Compress image to max 1400px / JPEG 0.82 before storing */
+  function compressImage(file, callback) {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1400;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else        { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      callback(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); callback(null); };
+    img.src = url;
+  }
+
   document.querySelectorAll('.photo-slot').forEach(slot => {
     const key   = 'photo__' + (slot.dataset.label || slot.className);
     const saved = localStorage.getItem(key);
@@ -261,23 +292,48 @@ if (VIEW_MODE) {
     updateShareBtn();
 
     slot.addEventListener('click', () => {
-      const inp    = document.createElement('input');
-      inp.type     = 'file';
-      inp.accept   = 'image/*';
+      const inp  = document.createElement('input');
+      inp.type   = 'file';
+      inp.accept = 'image/*';
       inp.onchange = e => {
         const file = e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = ev => {
-          applyPhoto(slot, ev.target.result);
-          try { localStorage.setItem(key, ev.target.result); } catch (_) {}
+        compressImage(file, dataUrl => {
+          if (!dataUrl) return;
+          applyPhoto(slot, dataUrl);
+          try { localStorage.setItem(key, dataUrl); } catch (_) {}
           updateShareBtn();
-        };
-        reader.readAsDataURL(file);
+        });
       };
       inp.click();
     });
   });
+}
+
+/* ── Save all photos explicitly to localStorage ── */
+function saveAllPhotos() {
+  const btn = document.getElementById('save-btn');
+  const txt = document.querySelector('.save-text');
+  if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Saving…'; }
+
+  let saved = 0, failed = 0;
+  document.querySelectorAll('.photo-slot.has-photo').forEach(slot => {
+    const key = 'photo__' + (slot.dataset.label || slot.className);
+    const img = slot.querySelector('.slot-photo');
+    if (!img || !img.src || img.src === window.location.href) return;
+    try { localStorage.setItem(key, img.src); saved++; }
+    catch (_) { failed++; }
+  });
+
+  setTimeout(() => {
+    if (btn) btn.disabled = false;
+    if (txt) {
+      txt.textContent = failed > 0
+        ? `⚠ ${failed} too large — try smaller photos`
+        : `✓ ${saved} photo${saved !== 1 ? 's' : ''} saved`;
+      setTimeout(() => { if (txt) txt.textContent = 'Save Photos'; }, 3000);
+    }
+  }, 350);
 }
 
 /* ══════════════════════════════════════════════

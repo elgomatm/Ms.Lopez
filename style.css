@@ -478,7 +478,9 @@ body:has(a:hover) #cur-ring {
 .slot-photo {
   display: block;
   width: 100%;
-  height: auto;
+  max-height: 320px;
+  object-fit: contain;    /* show full photo, no cropping */
+  background: #f2f2f2;    /* fills letterbox gaps inside frame */
   border-radius: 1px;
 }
 
@@ -492,7 +494,9 @@ body:has(a:hover) #cur-ring {
 .photo-slot.grid-slot.has-photo .slot-photo {
   width: 100%;
   height: calc(100% - 16px);
+  max-height: none;       /* override global cap for grid slots */
   object-fit: cover;
+  background: none;
   border-radius: 1px;
 }
 
@@ -874,6 +878,25 @@ body:has(a:hover) #cur-ring {
   transform: translateY(0);
   pointer-events: auto;
 }
+#save-btn {
+  display: flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 100px;
+  padding: 11px 20px;
+  font-family: var(--sans);
+  font-size: 0.78rem; font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s var(--spring);
+  align-self: flex-end;
+}
+#save-btn:hover  { background: rgba(255,255,255,0.22); transform: translateY(-2px); }
+#save-btn:disabled { opacity: 0.5; transform: none; cursor: wait; }
+.save-icon { font-size: 0.9rem; }
+
 #share-btn {
   display: flex; align-items: center; gap: 9px;
   background: #fff;
