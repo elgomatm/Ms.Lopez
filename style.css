@@ -843,6 +843,20 @@ body:has(a:hover) #cur-ring {
 .reveal-scale.in { opacity: 1; transform: none; }
 
 /* ══════════════════════════════════════════════
+   VIEW-ONLY MODE (share.html)
+══════════════════════════════════════════════ */
+.view-mode #cur-dot,
+.view-mode #cur-ring         { display: none !important; }
+.view-mode body,
+.view-mode .photo-slot       { cursor: default !important; }
+.view-mode .photo-slot:not(.has-photo) { display: none !important; }
+.view-mode .photo-slot:not(.has-photo):hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(255,255,255,0.25) !important;
+}
+
+/* ══════════════════════════════════════════════
    SHARE BUTTON (fixed bottom-right, shows after photos uploaded)
 ══════════════════════════════════════════════ */
 #share-btn-wrap {
