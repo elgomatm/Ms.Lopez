@@ -376,7 +376,7 @@ body:has(a:hover) #cur-ring {
   font-size: 1rem; line-height: 1.72; color: var(--mid);
 }
 
-/* ── Photo grid (sports) ── */
+/* ── Photo grid (sports section) ── */
 .photo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -384,69 +384,57 @@ body:has(a:hover) #cur-ring {
   gap: 16px;
   margin-top: 40px;
 }
-.grid-slot { width: 100%; height: 100%; }
-.grid-slot.tall { grid-row: span 2; height: 100%; }
+.grid-slot { width: 100% !important; height: 100% !important; min-height: unset !important; border-radius: 14px !important; }
+.grid-slot.tall { grid-row: span 2; }
 
-/* ── Photo slots ── */
+/* ══════════════════════════════════════════════
+   PHOTO SLOTS — base (empty state)
+══════════════════════════════════════════════ */
 .photo-slot {
-  width: 280px; height: 320px;
+  width: 100%;
+  min-height: 220px;
   border: 1.5px dashed rgba(255,255,255,0.25);
-  border-radius: 18px;
+  border-radius: 16px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 10px;
   cursor: pointer;
   position: relative; overflow: hidden;
-  transition: all 0.4s var(--ease);
-  background: rgba(255,255,255,0.04);
-  background-size: cover; background-position: center;
+  transition: border-color 0.35s var(--ease), transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+  background: transparent;
 }
 .photo-slot::before {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
   pointer-events: none;
 }
-.photo-slot:hover {
+.photo-slot:not(.has-photo):hover {
   border-color: rgba(255,255,255,0.55);
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 28px 60px rgba(0,0,0,0.25), 0 0 30px rgba(255,255,255,0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.18);
 }
+/* label shown on empty slots */
 .photo-slot::after {
   content: attr(data-label);
-  position: absolute; bottom: 14px; left: 0; right: 0;
+  position: absolute; bottom: 12px; left: 0; right: 0;
   text-align: center;
-  font-size: 0.62rem; letter-spacing: 0.14em;
+  font-size: 0.6rem; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--muted);
-  transition: opacity 0.3s;
-}
-.photo-slot.has-photo { border-color: transparent; }
-.photo-slot.has-photo::after { display: none; }
-.photo-slot.has-photo:hover { border-color: rgba(255,255,255,0.35); }
-
-@keyframes photoFloat {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-7px); }
-}
-.photo-slot.has-photo {
-  animation: photoFloat 5s ease-in-out infinite;
-}
-.photo-slot.has-photo:hover {
-  animation: none;
-  transform: translateY(-8px) scale(1.02);
 }
 
+/* ── Icons inside empty slots ── */
 .slot-icon {
   width: 38px; height: 38px;
   border-radius: 50%;
   border: 1.5px solid rgba(255,255,255,0.28);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem; color: rgba(255,255,255,0.6);
+  font-size: 1.2rem; color: rgba(255,255,255,0.55);
   font-weight: 300;
   transition: all 0.25s var(--spring);
 }
 .photo-slot:hover .slot-icon {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.14);
   color: #fff;
   border-color: rgba(255,255,255,0.7);
   transform: scale(1.1) rotate(45deg);
@@ -457,12 +445,142 @@ body:has(a:hover) #cur-ring {
   color: var(--muted);
 }
 
-.photo-slot.sm { width: 200px; height: 220px; }
-.photo-slot.lg { width: 320px; height: 400px; }
+/* ══════════════════════════════════════════════
+   PHOTO SLOTS — filled state (polaroid frame)
+══════════════════════════════════════════════ */
+.photo-slot.has-photo {
+  background: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 10px 10px 46px;
+  min-height: unset;
+  height: auto;
+  overflow: visible;
+  /* shadow layers for depth */
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.18),
+    0 8px 24px rgba(0,0,0,0.16),
+    0 20px 60px rgba(0,0,0,0.12);
+  transform: rotate(var(--rot, -1deg));
+  transition: transform 0.4s var(--spring), box-shadow 0.4s var(--ease);
+}
+.photo-slot.has-photo::before { display: none; }
+.photo-slot.has-photo::after  { display: none; }
+.photo-slot.has-photo:hover {
+  transform: rotate(0deg) translateY(-8px) scale(1.03);
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.22),
+    0 16px 40px rgba(0,0,0,0.20),
+    0 40px 80px rgba(0,0,0,0.14);
+}
+
+/* the image itself */
+.slot-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1px;
+}
+
+/* grid slots in sports: keep grid-sized, object-fit cover */
+.photo-slot.grid-slot.has-photo {
+  padding: 8px;
+  height: 100% !important;
+  transform: rotate(var(--rot, -1deg));
+  overflow: hidden;
+}
+.photo-slot.grid-slot.has-photo .slot-photo {
+  width: 100%;
+  height: calc(100% - 16px);
+  object-fit: cover;
+  border-radius: 1px;
+}
+
+/* hero slot keeps its pill shape */
+.hero-slot {
+  width: 340px !important;
+  min-height: 440px;
+  border-radius: 220px 220px 40px 40px !important;
+}
+.hero-slot.has-photo {
+  border-radius: 220px 220px 40px 40px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+.hero-slot.has-photo .slot-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ══════════════════════════════════════════════
+   PHOTO GROUPS — intentional layouts
+══════════════════════════════════════════════ */
+
+/* Family: tall left + two stacked right */
+.family-photos {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: 240px 220px;
+  gap: 16px;
+  width: 100%;
+}
+.family-photos .photo-slot { min-height: unset; height: 100%; width: 100%; }
+.family-photos .photo-slot:first-child { grid-row: span 2; }
+.family-photos .photo-slot.has-photo { height: auto; }
+.family-photos .photo-slot:first-child.has-photo { grid-row: span 2; }
+
+/* Background: large top, second inset bottom-right */
+.bg-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.bg-photos .photo-slot { min-height: 260px; }
+.bg-photos .photo-slot:nth-child(2) {
+  width: 76%;
+  align-self: flex-end;
+  min-height: 200px;
+}
+
+/* College: staggered cascade */
+.college-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.college-photos .photo-slot { min-height: 220px; }
+.college-photos .photo-slot:nth-child(2) {
+  width: 84%;
+  align-self: flex-end;
+  min-height: 180px;
+}
+.college-photos .photo-slot:nth-child(3) {
+  width: 70%;
+  align-self: flex-start;
+  min-height: 160px;
+}
+
+/* Switch: large top, two side-by-side below */
+.switch-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.switch-photos > .photo-slot { min-height: 280px; }
+.pg-duo {
+  display: flex;
+  gap: 14px;
+}
+.pg-duo .photo-slot { flex: 1; min-height: 180px; }
 
 .sec-right {
   display: flex; flex-direction: column;
   gap: 20px; align-items: flex-start;
+  width: 100%;
 }
 
 /* ══════════════════════════════════════════════

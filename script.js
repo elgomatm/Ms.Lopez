@@ -142,13 +142,33 @@ document.querySelectorAll('.stag').forEach((t, i) => {
 /* ══════════════════════════════════════════════
    PHOTO SLOT — click to upload + localStorage
 ══════════════════════════════════════════════ */
+
+/* Deterministic rotation per slot label (consistent across reloads) */
+function slotRotation(label) {
+  const angles = [-2.1, 1.8, -1.2, 2.4, -0.8, 1.5, -2.6, 0.9, -1.7, 2.0];
+  let hash = 0;
+  for (let i = 0; i < label.length; i++) hash = (hash * 31 + label.charCodeAt(i)) >>> 0;
+  return angles[hash % angles.length];
+}
+
 function applyPhoto(slot, dataUrl) {
-  slot.style.backgroundImage    = `url(${dataUrl})`;
-  slot.style.backgroundSize     = 'cover';
-  slot.style.backgroundPosition = 'center';
-  slot.classList.add('has-photo');
   slot.querySelector('.slot-icon')?.remove();
   slot.querySelector('.slot-label')?.remove();
+  slot.classList.add('has-photo');
+
+  /* polaroid tilt — unique angle per slot */
+  const rot = slotRotation(slot.dataset.label || '');
+  slot.style.setProperty('--rot', rot + 'deg');
+
+  /* use <img> so the photo keeps its natural aspect ratio */
+  let img = slot.querySelector('.slot-photo');
+  if (!img) {
+    img = document.createElement('img');
+    img.className = 'slot-photo';
+    img.alt = slot.dataset.label || '';
+    slot.appendChild(img);
+  }
+  img.src = dataUrl;
 }
 
 document.querySelectorAll('.photo-slot').forEach(slot => {
@@ -175,18 +195,20 @@ document.querySelectorAll('.photo-slot').forEach(slot => {
 });
 
 /* ══════════════════════════════════════════════
-   TILT effect on photo slots with photos
+   TILT effect on filled photo slots
 ══════════════════════════════════════════════ */
 document.querySelectorAll('.photo-slot').forEach(slot => {
   slot.addEventListener('mousemove', e => {
     if (!slot.classList.contains('has-photo')) return;
-    const r   = slot.getBoundingClientRect();
-    const dx  = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
-    const dy  = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
-    slot.style.transform = `translateY(-8px) scale(1.02) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg)`;
+    const r  = slot.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+    const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+    slot.style.transform =
+      `rotate(0deg) translateY(-8px) scale(1.03) rotateY(${dx * 5}deg) rotateX(${-dy * 5}deg)`;
   });
   slot.addEventListener('mouseleave', () => {
     if (!slot.classList.contains('has-photo')) return;
-    slot.style.transform = '';
+    const rot = slot.style.getPropertyValue('--rot') || '-1deg';
+    slot.style.transform = `rotate(${rot})`;
   });
 });
