@@ -603,14 +603,18 @@ body:has(a:hover) #cur-ring {
 }
 .reveal-right.in { opacity: 1; transform: none; }
 
-.reveal-line {
-  display: block;
-  overflow: hidden;
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 0.95s var(--ease);
+.reveal-heading {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(10px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease), filter 0.9s var(--ease);
   transition-delay: var(--d, 0s);
 }
-.reveal-line.in { clip-path: inset(0 0 0% 0); }
+.reveal-heading.in {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
 
 .reveal-scale {
   opacity: 0;

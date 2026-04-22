@@ -53,24 +53,31 @@ updateSideNav();
 /* ══════════════════════════════════════════════
    REVEAL ON SCROLL (IntersectionObserver)
 ══════════════════════════════════════════════ */
-const revealClasses = ['.reveal-up', '.reveal-left', '.reveal-right', '.reveal-line', '.reveal-scale'];
+const revealClasses = ['.reveal-up', '.reveal-left', '.reveal-right', '.reveal-heading', '.reveal-scale'];
 
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
+      /* if it's a heading, scramble as the blur clears */
+      if (e.target.classList.contains('scramble')) {
+        setTimeout(() => scramble(e.target), 180);
+      }
       revealObserver.unobserve(e.target);
     }
   });
-}, { threshold: 0.10 });
+}, { threshold: 0.05 });
 
 document.querySelectorAll(revealClasses.join(', '))
   .forEach(el => revealObserver.observe(el));
 
 /* Hero fires immediately */
 setTimeout(() => {
-  document.querySelectorAll('#hero .reveal-line, #hero .reveal-up, #hero .reveal-scale')
-    .forEach(el => el.classList.add('in'));
+  document.querySelectorAll('#hero .reveal-heading, #hero .reveal-up, #hero .reveal-scale')
+    .forEach(el => {
+      el.classList.add('in');
+      if (el.classList.contains('scramble')) scramble(el);
+    });
 }, 120);
 
 /* ══════════════════════════════════════════════
@@ -97,16 +104,7 @@ function scramble(el) {
   }, 28);
 }
 
-const scrambleObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      scramble(e.target);
-      scrambleObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.5 });
-
-document.querySelectorAll('.scramble').forEach(el => scrambleObserver.observe(el));
+/* scramble is now triggered directly inside revealObserver above */
 
 /* ══════════════════════════════════════════════
    PARALLAX — hero bg text + photo wrap
