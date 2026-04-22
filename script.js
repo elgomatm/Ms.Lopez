@@ -209,7 +209,7 @@ window.addEventListener('scroll', () => {
    SIDE NAV — active dot tracking
 ══════════════════════════════════════════════ */
 const sideDots = document.querySelectorAll('.side-dot');
-const secIds   = ['hero', 'family', 'background', 'sports', 'college', 'switch', 'exotics'];
+const secIds   = ['hero', 'family', 'background', 'sports', 'hobbies', 'college', 'switch', 'exotics'];
 
 function updateSideNav() {
   let currentId = 'hero';

@@ -565,6 +565,25 @@ body:has(a:hover) #cur-ring {
   min-height: 160px;
 }
 
+/* Hobbies: staggered trio — first wide, second offset right, third offset left */
+.hobbies-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.hobbies-photos .photo-slot { min-height: 200px; }
+.hobbies-photos .photo-slot:nth-child(2) {
+  width: 80%;
+  align-self: flex-end;
+  min-height: 180px;
+}
+.hobbies-photos .photo-slot:nth-child(3) {
+  width: 90%;
+  align-self: flex-start;
+  min-height: 180px;
+}
+
 /* Switch: large top, two side-by-side below */
 .switch-photos {
   display: flex;
