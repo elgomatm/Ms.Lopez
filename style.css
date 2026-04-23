@@ -853,17 +853,22 @@ body:has(a:hover) #cur-ring {
   filter: blur(0);
 }
 
-/* ── Cursive write-in for section headings — fade + slide from left ── */
-.reveal-heading.scramble {
-  opacity: 0;
-  transform: translateX(-22px);
-  filter: none;
-  transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
-  transition-delay: var(--d, 0s);
+/* ── Cursive write-in for section headings ── */
+@keyframes writeCursive {
+  from { clip-path: inset(0 102% 0 0); }
+  to   { clip-path: inset(0 -4%  0 0); }
 }
-.reveal-heading.scramble.in {
+.reveal-heading.scramble {
   opacity: 1;
   transform: none;
+  filter: none;
+  transition: none;
+  clip-path: inset(0 102% 0 0);
+  pointer-events: none; /* invisible — don't block taps on slots below */
+}
+.reveal-heading.scramble.in {
+  pointer-events: auto;
+  animation: writeCursive 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--d, 0s) both;
 }
 
 .reveal-scale {

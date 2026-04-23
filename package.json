@@ -2,8 +2,7 @@
   "name": "malik-ms-lopes",
   "private": true,
   "dependencies": {
-    "@vercel/blob": "^0.24.0",
-    "@vercel/og": "^0.6.3"
+    "@vercel/blob": "^0.24.0"
   },
   "engines": {
     "node": ">=18"
