@@ -165,39 +165,69 @@ if (VIEW_MODE) {
 } else {
   /* ── Edit mode: restore from localStorage + wire upload clicks ── */
 
-  /* Compress file in background → swap blob URL in slot → save to localStorage + server */
-  function compressForSave(file, label) {
-    const tmpUrl = URL.createObjectURL(file);
-    const img    = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(tmpUrl);
-      try {
-        const MAX = 1200;
-        let w = img.naturalWidth, h = img.naturalHeight;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-          else        { w = Math.round(w * MAX / h); h = MAX; }
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const TARGET = 3.5 * 1024 * 1024;
-        let quality = 0.82;
-        let dataUrl = canvas.toDataURL('image/jpeg', quality);
-        while (dataUrl.length > TARGET && quality > 0.25) {
-          quality -= 0.08;
-          dataUrl = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
-        }
-        /* Swap the temporary object URL in the slot with the compressed data URL */
-        const s  = document.querySelector(`.photo-slot[data-label="${label}"]`);
-        const im = s && s.querySelector('.slot-photo');
-        if (im && im.src.startsWith('blob:')) im.src = dataUrl;
-        try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
-        autoPersistPhoto(label, dataUrl);
-      } catch (_) { /* canvas failed — object URL still showing, that's fine */ }
-    };
-    img.onerror = () => { URL.revokeObjectURL(tmpUrl); };
-    img.src = tmpUrl;
+  /* Compress file → returns data URL (used for upload only, never set as img.src) */
+  function compressToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const tmp = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(tmp);
+        try {
+          const MAX = 1200;
+          let w = img.naturalWidth, h = img.naturalHeight;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else        { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const TARGET = 3.5 * 1024 * 1024;
+          let q = 0.82, out = canvas.toDataURL('image/jpeg', q);
+          while (out.length > TARGET && q > 0.25) {
+            q -= 0.08;
+            out = canvas.toDataURL('image/jpeg', Math.max(q, 0.25));
+          }
+          resolve(out);
+        } catch (err) { reject(err); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(tmp); reject(new Error('load')); };
+      img.src = tmp;
+    });
+  }
+
+  /* Upload file to Vercel Blob, then swap object URL → permanent blob URL in slot */
+  async function uploadAndPersist(file, label, objectUrl) {
+    try {
+      const dataUrl = await compressToDataUrl(file);
+      const res  = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dataUrl, filename: `photo-${label}-${Date.now()}.jpg` })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!data.url) return;
+
+      /* objectUrl → permanent Vercel Blob URL (both are normal https/blob URLs, no size limits) */
+      URL.revokeObjectURL(objectUrl);
+      const s  = document.querySelector(`.photo-slot[data-label="${label}"]`);
+      const im = s && s.querySelector('.slot-photo');
+      if (im) im.src = data.url;
+      try { localStorage.setItem('photo__' + label, data.url); } catch (_) {}
+
+      /* Rebuild + save server manifest */
+      const manifest = {};
+      document.querySelectorAll('.photo-slot.has-photo').forEach(sl => {
+        const lbl  = sl.dataset.label || sl.className;
+        const slIm = sl.querySelector('.slot-photo');
+        if (slIm && slIm.src && !slIm.src.startsWith('blob:')) manifest[lbl] = slIm.src;
+      });
+      await fetch('/api/save-photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photos: manifest })
+      });
+    } catch (_) { /* silent — photo still shows via object URL for this session */ }
   }
 
   /* ── Restore from localStorage immediately (instant), then sync from server ── */
@@ -224,38 +254,6 @@ if (VIEW_MODE) {
     })
     .catch(() => { /* silently ignore — localStorage already applied */ });
 
-  /* ── Auto-persist: upload to Vercel Blob + save manifest silently ── */
-  async function autoPersistPhoto(label, dataUrl) {
-    try {
-      const res  = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dataUrl, filename: `photo-${label}-${Date.now()}.jpg` })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!data.url) return;
-
-      /* Swap data URI for permanent blob URL in DOM + localStorage */
-      const slot = document.querySelector(`.photo-slot[data-label="${label}"]`);
-      const img  = slot && slot.querySelector('.slot-photo');
-      if (img) img.src = data.url;
-      try { localStorage.setItem('photo__' + label, data.url); } catch (_) {}
-
-      /* Rebuild the full manifest from every filled slot and save it */
-      const manifest = {};
-      document.querySelectorAll('.photo-slot.has-photo').forEach(s => {
-        const lbl = s.dataset.label || s.className;
-        const im  = s.querySelector('.slot-photo');
-        if (im && im.src && !im.src.startsWith('data:')) manifest[lbl] = im.src;
-      });
-      await fetch('/api/save-photos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photos: manifest })
-      });
-    } catch (_) { /* silent — photo is already shown from localStorage */ }
-  }
-
   /* ── Wire upload click handlers ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
@@ -273,8 +271,8 @@ if (VIEW_MODE) {
         /* createObjectURL has no size limit — shows any photo instantly */
         const objectUrl = URL.createObjectURL(file);
         applyPhoto(slot, objectUrl);
-        /* Compress in background → swap to data URL → save locally + server */
-        compressForSave(file, label);
+        /* Compress in background → upload to Vercel Blob → swap objectUrl to permanent URL */
+        uploadAndPersist(file, label, objectUrl);
       });
 
       inp.click();
