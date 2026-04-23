@@ -7,10 +7,24 @@ const dot  = document.getElementById('cur-dot');
 const ring = document.getElementById('cur-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
 
+/* Orb parallax state */
+const heroOrbs = document.querySelectorAll('.hero-orb');
+let orbTx = 0, orbTy = 0, orbCx = 0, orbCy = 0, orbT = 0;
+
 document.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
   document.documentElement.style.setProperty('--spot-x', e.clientX + 'px');
   document.documentElement.style.setProperty('--spot-y', e.clientY + 'px');
+  orbTx = (e.clientX / window.innerWidth  - 0.5) * 70;
+  orbTy = (e.clientY / window.innerHeight - 0.5) * 50;
+});
+
+/* Click ripple on cursor */
+document.addEventListener('mousedown', () => {
+  dot.classList.add('clicked'); ring.classList.add('clicked');
+});
+document.addEventListener('mouseup', () => {
+  dot.classList.remove('clicked'); ring.classList.remove('clicked');
 });
 
 (function tickCursor() {
@@ -19,6 +33,17 @@ document.addEventListener('mousemove', e => {
   ry += (my - ry) * 0.13;
   dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
   ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+
+  /* Orb: lerp toward mouse + sinusoidal drift */
+  orbT  += 0.004;
+  orbCx += (orbTx - orbCx) * 0.035;
+  orbCy += (orbTy - orbCy) * 0.035;
+  heroOrbs.forEach((orb, i) => {
+    const d     = (i + 1) * 0.38;
+    const driftX = Math.sin(orbT + i * 2.3) * 28;
+    const driftY = Math.cos(orbT * 0.8 + i * 1.7) * 22;
+    orb.style.transform = `translate(${orbCx * d + driftX}px, ${orbCy * d + driftY}px)`;
+  });
 })();
 
 /* ══════════════════════════════════════════════
@@ -330,14 +355,18 @@ function animateCount(el) {
   el.dataset.counted = '1';
   const target = parseInt(el.dataset.count, 10);
   const suffix = el.dataset.suffix || '';
-  if (!el.dataset.count) return; /* skip "1st" type */
-  const duration = 1400;
+  if (!el.dataset.count) return;
+  const duration = 1500;
   const start    = performance.now();
   const tick = now => {
     const p = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3); /* ease-out cubic */
+    const eased = 1 - Math.pow(1 - p, 3);
     el.textContent = Math.floor(eased * target) + suffix;
-    if (p < 1) requestAnimationFrame(tick);
+    if (p < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      el.classList.add('done'); /* trigger glow */
+    }
   };
   requestAnimationFrame(tick);
 }
@@ -352,3 +381,31 @@ const statObserver = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 
 document.querySelectorAll('.stat-num[data-count]').forEach(el => statObserver.observe(el));
+
+/* ══════════════════════════════════════════════
+   MAGNETIC LINK CARDS
+══════════════════════════════════════════════ */
+document.querySelectorAll('.link-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width  / 2) * 0.12;
+    const dy = (e.clientY - r.top  - r.height / 2) * 0.12;
+    card.style.transform = `translate(${dx}px, ${dy}px) scale(1.02)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+/* ══════════════════════════════════════════════
+   MAGNETIC STAT BOXES
+══════════════════════════════════════════════ */
+document.querySelectorAll('.stat').forEach(stat => {
+  stat.addEventListener('mousemove', e => {
+    const r  = stat.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width  / 2) * 0.08;
+    const dy = (e.clientY - r.top  - r.height / 2) * 0.08;
+    stat.style.transform = `translate(${dx}px, ${dy}px)`;
+  });
+  stat.addEventListener('mouseleave', () => { stat.style.transform = ''; });
+});
