@@ -70,11 +70,18 @@ async function generateSharePage() {
     } catch (_) { /* keep original data URI as fallback */ }
   }
 
-  /* ── 3. Build the final HTML — photos are now blob URLs so it's tiny ── */
+  /* ── 3. Inline CSS + JS so the page needs zero Vercel auth to open ── */
   if (txt) txt.textContent = 'Finalising…';
-  const bodyHtml  = shareDoc.body.innerHTML;
-  const origin    = window.location.origin;   /* absolute URL so CSS/JS load from Vercel */
+  const bodyHtml = shareDoc.body.innerHTML;
 
+  let cssText = '', jsText = '';
+  try {
+    const [cr, jr] = await Promise.all([fetch('./style.css'), fetch('./script.js')]);
+    cssText = await cr.text();
+    jsText  = await jr.text();
+  } catch (e) { console.warn('Could not inline assets', e); }
+
+  /* Photos are blob URLs, CSS+JS are ~80 KB inline — total well under 5 MB limit */
   const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,11 +91,11 @@ async function generateSharePage() {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="${origin}/style.css">
+  ${cssText ? `<style>${cssText}<\/style>` : `<link rel="stylesheet" href="./style.css">`}
   <script>window.VIEW_MODE = true;<\/script>
 </head>
 <body>${bodyHtml}
-<script src="${origin}/script.js"><\/script>
+  ${jsText ? `<script>${jsText}<\/script>` : `<script src="./script.js"><\/script>`}
 </body>
 </html>`;
 
