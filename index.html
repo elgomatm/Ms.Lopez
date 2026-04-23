@@ -6,8 +6,16 @@
   <title>Malik Elgomati</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Open Graph / link preview -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Malik Elgomati" />
+  <meta property="og:description" content="A personal page for Ms. Lopez — family, sports, The Exotics Network, and everything in between." />
+  <meta property="og:image"       content="/api/og" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="/api/og" />
 </head>
 <body>
   <div id="cur-dot"></div>
@@ -28,7 +36,7 @@
 
   <nav id="nav">
     <span class="nav-name">MALIK ELGOMATI</span>
-    <span class="nav-note">A note for Ms. Lopes</span>
+    <span class="nav-note">A note for Ms. Lopez</span>
   </nav>
 
   <!-- ═══════════ HERO ═══════════ -->
@@ -37,7 +45,7 @@
     <div class="hero-orb orb-2"></div>
     <div class="hero-bg-text" aria-hidden="true">MALIK</div>
     <div class="hero-content">
-      <h1 class="hero-greeting reveal-heading" style="--d:0.05s">Hello, Ms. Lopes.</h1>
+      <h1 class="hero-greeting reveal-heading" style="--d:0.05s">Hello, Ms. Lopez.</h1>
       <p class="hero-intro reveal-up" style="--d:0.35s">My name is Malik Elgomati and I designed this page in hopes you learn a little bit about me.</p>
     </div>
     <div class="hero-photo-wrap reveal-scale" style="--d:0.2s">
@@ -248,16 +256,24 @@
         </ul>
         <div class="stat-strip reveal-up" style="--d:0.60s">
           <div class="stat">
-            <span class="stat-num">1.5</span>
-            <span class="stat-label">Years in</span>
+            <span class="stat-num">30+</span>
+            <span class="stat-label">Events Thrown</span>
           </div>
           <div class="stat">
-            <span class="stat-num">∞</span>
-            <span class="stat-label">Investment Offers</span>
+            <span class="stat-num">200K+</span>
+            <span class="stat-label">Followers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">20+</span>
+            <span class="stat-label">Official Partners</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">7</span>
+            <span class="stat-label">Person Team</span>
           </div>
           <div class="stat">
             <span class="stat-num">1st</span>
-            <span class="stat-label">Intl. Event '25</span>
+            <span class="stat-label">Intl. Event '26</span>
           </div>
         </div>
       </div>
@@ -281,7 +297,7 @@
   <section class="sec closing-sec" id="closing">
     <div class="closing-inner">
       <p class="sec-tag reveal-up">One Last Thing</p>
-      <p class="closing-note reveal-up" style="--d:0.14s">I genuinely am excited and looking forward to our FaceTime, Ms. Lopes. I put this together because I wanted you to get a real sense of who I am before we connect — and please don't feel shy to ask me about anything when we do.</p>
+      <p class="closing-note reveal-up" style="--d:0.14s">I genuinely am excited and looking forward to our FaceTime, Ms. Lopez. I put this together because I wanted you to get a real sense of who I am before we connect — and please don't feel shy to ask me about anything when we do!</p>
       <p class="closing-sign reveal-up" style="--d:0.28s">— Malik</p>
     </div>
   </section>
@@ -289,7 +305,7 @@
   <!-- ═══════════ LINKS ═══════════ -->
   <section class="sec alt links-sec" id="links">
     <div class="links-inner">
-      <p class="sec-tag reveal-up" style="text-align:center; margin-bottom:40px;">Find Me</p>
+      <p class="sec-tag reveal-up" style="text-align:center; margin-bottom:40px;">While You're Here</p>
       <div class="link-cards">
         <a class="link-card reveal-scale" style="--d:0.08s" href="https://www.linkedin.com/in/malik-elgomati/" target="_blank" rel="noopener">
           <span class="link-card-icon">in</span>
@@ -316,23 +332,10 @@
   <!-- ═══════════ FOOTER ═══════════ -->
   <footer id="footer">
     <div class="footer-inner">
-      <p class="footer-line reveal-up">Thank you for taking the time.</p>
-      <p class="footer-sig reveal-up" style="--d:0.14s">Ms. Lopes.</p>
+      <p class="footer-line reveal-up">Thank you for taking the time. Talk to you soon!</p>
+      <p class="footer-sig reveal-up" style="--d:0.14s">Ms. Lopez.</p>
     </div>
   </footer>
-
-  <!-- Bottom-right panel — appears after first photo uploaded -->
-  <div id="share-btn-wrap">
-    <button id="save-btn" onclick="saveAllPhotos()">
-      <span class="save-icon">↓</span>
-      <span class="save-text">Save Photos</span>
-    </button>
-    <button id="share-btn" onclick="generateSharePage()">
-      <span class="share-icon">↗</span>
-      <span class="share-text">Get Share Link</span>
-    </button>
-    <p class="share-hint">Pushes directly to your site — send her the link</p>
-  </div>
 
   <script src="script.js"></script>
 </body>

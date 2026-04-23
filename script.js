@@ -1,182 +1,6 @@
 'use strict';
 
 /* ══════════════════════════════════════════════
-   SHARE PAGE GENERATOR
-   Pushes a fully self-contained share.html to
-   GitHub so Vercel deploys it — Ms. Lopes gets
-   a real link, not a file download.
-══════════════════════════════════════════════ */
-function updateShareBtn() {
-  const wrap = document.getElementById('share-btn-wrap');
-  if (!wrap) return;
-  const hasPhotos = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i))
-    .some(k => k && k.startsWith('photo__'));
-  wrap.classList.toggle('visible', hasPhotos);
-}
-
-/* UTF-8 → base64 (handles emoji / non-ASCII safely) */
-function utf8ToBase64(str) {
-  const bytes = new TextEncoder().encode(str);
-  let bin = '';
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
-
-async function generateSharePage() {
-  const btn  = document.getElementById('share-btn');
-  const txt  = document.querySelector('.share-text');
-  const hint = document.querySelector('.share-hint');
-  if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Building…'; }
-
-  const hasPhotos = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i))
-    .some(k => k && k.startsWith('photo__'));
-  if (!hasPhotos) {
-    alert('Upload some photos first!');
-    if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    return;
-  }
-
-  /* ── 1. Snapshot DOM ── */
-  let bodyHtml = document.body.innerHTML;
-  bodyHtml = bodyHtml.replace(/(\bclass="[^"]*)\bin\b\s*/g, '$1');
-  const shareDoc = new DOMParser().parseFromString(
-    `<!DOCTYPE html><html><body>${bodyHtml}</body></html>`, 'text/html'
-  );
-  shareDoc.querySelectorAll('.photo-slot:not(.has-photo)').forEach(el => el.remove());
-  ['cur-dot', 'cur-ring', 'share-btn-wrap'].forEach(id => shareDoc.getElementById(id)?.remove());
-  shareDoc.querySelector('script[src="script.js"]')?.remove();
-  bodyHtml = shareDoc.body.innerHTML;
-
-  /* ── 2. Inline CSS + JS so the file is 100% self-contained ── */
-  if (txt) txt.textContent = 'Fetching assets…';
-  let cssText = '', jsText = '';
-  try {
-    const [cssRes, jsRes] = await Promise.all([fetch('./style.css'), fetch('./script.js')]);
-    cssText = await cssRes.text();
-    jsText  = await jsRes.text();
-  } catch (e) { console.warn('Asset fetch failed — falling back to linked files', e); }
-
-  const inlined = !!(cssText && jsText);
-  const fullHtml = inlined
-    ? `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malik Elgomati \u2014 For Ms. Lopes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
-  <style>${cssText}<\/style>
-  <script>window.VIEW_MODE = true;<\/script>
-</head>
-<body>${bodyHtml}
-<script>${jsText}<\/script>
-</body>
-</html>`
-    : `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malik Elgomati \u2014 For Ms. Lopes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script>window.VIEW_MODE = true;<\/script>
-</head>
-<body>${bodyHtml}
-<script src="script.js"><\/script>
-</body>
-</html>`;
-
-  /* ── 3. Get GitHub token (prompted once, stored) ── */
-  let token = localStorage.getItem('gh_token');
-  if (!token) {
-    if (txt) txt.textContent = 'Needs token…';
-    token = prompt(
-      'One-time GitHub setup — takes 30 seconds:\n\n' +
-      '1. Open: github.com/settings/tokens/new\n' +
-      '2. Note: "Ms. Lopes share"\n' +
-      '3. Tick "repo" (full repo access)\n' +
-      '4. Click Generate token\n' +
-      '5. Paste it below\n\n' +
-      "It's saved locally — you'll never see this again."
-    );
-    if (!token) {
-      if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-      return;
-    }
-    localStorage.setItem('gh_token', token.trim());
-    token = token.trim();
-  }
-
-  /* ── 4. Push to GitHub ── */
-  if (txt) txt.textContent = 'Pushing…';
-
-  const OWNER  = 'elgomatm';
-  const REPO   = 'Ms.Lopez';
-  const FILE   = 'share.html';
-  const BRANCH = 'main';
-  const HEADERS = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github+json',
-    'Content-Type': 'application/json'
-  };
-
-  /* Get existing SHA if file already exists */
-  let sha;
-  try {
-    const check = await fetch(
-      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}?ref=${BRANCH}`,
-      { headers: HEADERS }
-    );
-    if (check.ok) sha = (await check.json()).sha;
-  } catch (_) {}
-
-  const payload = {
-    message: 'Update share page with latest photos',
-    content: utf8ToBase64(fullHtml),
-    branch: BRANCH
-  };
-  if (sha) payload.sha = sha;
-
-  const res = await fetch(
-    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,
-    { method: 'PUT', headers: HEADERS, body: JSON.stringify(payload) }
-  );
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    if (res.status === 401 || res.status === 403) {
-      localStorage.removeItem('gh_token');
-      alert('Token looks wrong — click the button again and enter a new one.\n\n(github.com/settings/tokens/new)');
-    } else {
-      alert('GitHub error ' + res.status + ': ' + (err.message || 'unknown'));
-    }
-    if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    return;
-  }
-
-  /* ── 5. Show the link ── */
-  const shareUrl = window.location.origin + '/' + FILE;
-  try { await navigator.clipboard.writeText(shareUrl); } catch (_) {}
-
-  if (txt) txt.textContent = '✓ Link copied!';
-  if (hint) {
-    hint.innerHTML =
-      `<a href="${shareUrl}" target="_blank" style="color:inherit;font-weight:600;word-break:break-all">${shareUrl}</a>` +
-      `<br><span style="opacity:0.7;font-size:0.78rem">Vercel deploys in ~30 s — then it's live</span>`;
-  }
-
-  setTimeout(() => {
-    if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    if (hint) hint.textContent = 'Pushes directly to your site — send her the link';
-  }, 12000);
-}
-
-/* ══════════════════════════════════════════════
    CURSOR
 ══════════════════════════════════════════════ */
 const dot  = document.getElementById('cur-dot');
@@ -235,10 +59,6 @@ const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
-      /* if it's a heading, scramble as the blur clears */
-      if (e.target.classList.contains('scramble')) {
-        setTimeout(() => scramble(e.target), 180);
-      }
       revealObserver.unobserve(e.target);
     }
   });
@@ -250,37 +70,8 @@ document.querySelectorAll(revealClasses.join(', '))
 /* Hero fires immediately */
 setTimeout(() => {
   document.querySelectorAll('#hero .reveal-heading, #hero .reveal-up, #hero .reveal-scale')
-    .forEach(el => {
-      el.classList.add('in');
-      if (el.classList.contains('scramble')) scramble(el);
-    });
+    .forEach(el => el.classList.add('in'));
 }, 120);
-
-/* ══════════════════════════════════════════════
-   SCRAMBLE TEXT on section headings
-══════════════════════════════════════════════ */
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-function scramble(el) {
-  if (el.dataset.scrambled) return;
-  el.dataset.scrambled = '1';
-  const original = el.textContent.trim();
-  let iter = 0;
-  const interval = setInterval(() => {
-    el.textContent = original.split('').map((ch, i) => {
-      if (ch === ' ') return ' ';
-      if (i < iter)  return original[i];
-      return CHARS[Math.floor(Math.random() * CHARS.length)];
-    }).join('');
-    iter += 0.4;
-    if (iter >= original.length) {
-      el.textContent = original;
-      clearInterval(interval);
-    }
-  }, 28);
-}
-
-/* scramble is now triggered directly inside revealObserver above */
 
 /* ══════════════════════════════════════════════
    PARALLAX — hero bg text + photo wrap
@@ -360,7 +151,7 @@ if (VIEW_MODE) {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      const MAX = 1400;
+      const MAX = 1200;  /* cap longest side at 1200 px */
       let w = img.naturalWidth, h = img.naturalHeight;
       if (w > MAX || h > MAX) {
         if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -370,18 +161,48 @@ if (VIEW_MODE) {
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
-      callback(canvas.toDataURL('image/jpeg', 0.82));
+
+      /* Step quality down until the base64 string is under 3.5 MB
+         (leaves headroom for the 5 MB /api/upload body limit)       */
+      const TARGET = 3.5 * 1024 * 1024;
+      let quality = 0.80;
+      let dataUrl  = canvas.toDataURL('image/jpeg', quality);
+      while (dataUrl.length > TARGET && quality > 0.25) {
+        quality -= 0.08;
+        dataUrl  = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
+      }
+      callback(dataUrl);
     };
     img.onerror = () => { URL.revokeObjectURL(url); callback(null); };
     img.src = url;
   }
 
+  /* ── Restore from localStorage immediately (instant), then sync from server ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     const key   = 'photo__' + (slot.dataset.label || slot.className);
     const saved = localStorage.getItem(key);
     if (saved) applyPhoto(slot, saved);
-    updateShareBtn();
+  });
 
+  /* Fetch server manifest in background — fills any slots not in localStorage
+     and ensures photos survive deployments / browser-data clears              */
+  fetch('/api/load-photos')
+    .then(r => r.ok ? r.json() : { photos: {} })
+    .then(({ photos }) => {
+      if (!photos) return;
+      document.querySelectorAll('.photo-slot').forEach(slot => {
+        const label = slot.dataset.label || slot.className;
+        const url   = photos[label];
+        if (!url) return;
+        applyPhoto(slot, url);
+        /* Cache the blob URL locally (tiny — just a URL string) */
+        try { localStorage.setItem('photo__' + label, url); } catch (_) {}
+      });
+    })
+    .catch(() => { /* silently ignore — localStorage already applied */ });
+
+  /* ── Wire upload click handlers ── */
+  document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
       const inp  = document.createElement('input');
       inp.type   = 'file';
@@ -391,40 +212,14 @@ if (VIEW_MODE) {
         if (!file) return;
         compressImage(file, dataUrl => {
           if (!dataUrl) return;
+          const label = slot.dataset.label || slot.className;
           applyPhoto(slot, dataUrl);
-          try { localStorage.setItem(key, dataUrl); } catch (_) {}
-          updateShareBtn();
+          try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
         });
       };
       inp.click();
     });
   });
-}
-
-/* ── Save all photos explicitly to localStorage ── */
-function saveAllPhotos() {
-  const btn = document.getElementById('save-btn');
-  const txt = document.querySelector('.save-text');
-  if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Saving…'; }
-
-  let saved = 0, failed = 0;
-  document.querySelectorAll('.photo-slot.has-photo').forEach(slot => {
-    const key = 'photo__' + (slot.dataset.label || slot.className);
-    const img = slot.querySelector('.slot-photo');
-    if (!img || !img.src || img.src === window.location.href) return;
-    try { localStorage.setItem(key, img.src); saved++; }
-    catch (_) { failed++; }
-  });
-
-  setTimeout(() => {
-    if (btn) btn.disabled = false;
-    if (txt) {
-      txt.textContent = failed > 0
-        ? `⚠ ${failed} too large — try smaller photos`
-        : `✓ ${saved} photo${saved !== 1 ? 's' : ''} saved`;
-      setTimeout(() => { if (txt) txt.textContent = 'Save Photos'; }, 3000);
-    }
-  }, 350);
 }
 
 /* ══════════════════════════════════════════════
