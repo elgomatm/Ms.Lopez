@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   MALIK ELGOMATI — Personal Site for Ms. Lopes
+   MALIK ELGOMATI — Personal Site for Ms. Lopez
    Bright red · white text · super dynamic
 ══════════════════════════════════════════════ */
 :root {
@@ -478,7 +478,9 @@ body:has(a:hover) #cur-ring {
 .slot-photo {
   display: block;
   width: 100%;
-  height: auto;           /* natural aspect ratio — frame hugs the photo */
+  height: 260px;          /* consistent height so no photo ever dwarfs the page */
+  object-fit: cover;      /* fills the frame cleanly — no letterbox, no stretching */
+  object-position: center;
   border-radius: 1px;
 }
 
@@ -956,10 +958,10 @@ body:has(a:hover) #cur-ring {
   .photo-slot.lg { width: 100%; max-width: 340px; height: 320px; }
   .photo-slot { width: 100%; max-width: 300px; height: 260px; }
   .photo-slot.sm { width: 46%; height: 200px; }
-  /* filled slots: always let the photo dictate the height */
+  /* filled slots: fixed photo height ensures nothing dwarfs the page on mobile */
   .photo-slot.has-photo,
   .photo-slot.lg.has-photo,
-  .photo-slot.sm.has-photo { height: auto !important; max-width: 100%; }
+  .photo-slot.sm.has-photo { height: auto; max-width: 100%; }
   .photo-grid { grid-template-columns: 1fr 1fr; }
   .grid-slot.tall { grid-row: span 1; }
   #nav { padding: 16px 24px; }

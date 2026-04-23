@@ -80,7 +80,7 @@ async function generateSharePage() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malik Elgomati \u2014 For Ms. Lopes</title>
+  <title>Malik Elgomati \u2014 For Ms. Lopez</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
@@ -121,7 +121,7 @@ async function generateSharePage() {
   if (hint) {
     hint.innerHTML =
       `<a href="${shareUrl}" target="_blank" style="color:inherit;font-weight:600;word-break:break-all">${shareUrl}</a>` +
-      `<br><span style="opacity:0.7;font-size:0.78rem">Copied — send it to Ms. Lopes ✓</span>`;
+      `<br><span style="opacity:0.7;font-size:0.78rem">Copied — send it to Ms. Lopez ✓</span>`;
   }
 
   setTimeout(() => {
@@ -314,7 +314,7 @@ if (VIEW_MODE) {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
-      const MAX = 1400;
+      const MAX = 1200;  /* cap longest side at 1200 px */
       let w = img.naturalWidth, h = img.naturalHeight;
       if (w > MAX || h > MAX) {
         if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -324,7 +324,17 @@ if (VIEW_MODE) {
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
-      callback(canvas.toDataURL('image/jpeg', 0.82));
+
+      /* Step quality down until the base64 string is under 3.5 MB
+         (leaves headroom for the 5 MB /api/upload body limit)       */
+      const TARGET = 3.5 * 1024 * 1024;
+      let quality = 0.80;
+      let dataUrl  = canvas.toDataURL('image/jpeg', quality);
+      while (dataUrl.length > TARGET && quality > 0.25) {
+        quality -= 0.08;
+        dataUrl  = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
+      }
+      callback(dataUrl);
     };
     img.onerror = () => { URL.revokeObjectURL(url); callback(null); };
     img.src = url;
