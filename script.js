@@ -347,12 +347,34 @@ if (VIEW_MODE) {
     img.src = url;
   }
 
+  /* ── Restore from localStorage immediately (instant), then sync from server ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     const key   = 'photo__' + (slot.dataset.label || slot.className);
     const saved = localStorage.getItem(key);
     if (saved) applyPhoto(slot, saved);
-    updateShareBtn();
+  });
+  updateShareBtn();
 
+  /* Fetch server manifest in background — fills any slots not in localStorage
+     and ensures photos survive deployments / browser-data clears              */
+  fetch('/api/load-photos')
+    .then(r => r.ok ? r.json() : { photos: {} })
+    .then(({ photos }) => {
+      if (!photos) return;
+      document.querySelectorAll('.photo-slot').forEach(slot => {
+        const label = slot.dataset.label || slot.className;
+        const url   = photos[label];
+        if (!url) return;
+        applyPhoto(slot, url);
+        /* Cache the blob URL locally (tiny — just a URL string) */
+        try { localStorage.setItem('photo__' + label, url); } catch (_) {}
+      });
+      updateShareBtn();
+    })
+    .catch(() => { /* silently ignore — localStorage already applied */ });
+
+  /* ── Wire upload click handlers ── */
+  document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
       const inp  = document.createElement('input');
       inp.type   = 'file';
@@ -362,8 +384,9 @@ if (VIEW_MODE) {
         if (!file) return;
         compressImage(file, dataUrl => {
           if (!dataUrl) return;
+          const label = slot.dataset.label || slot.className;
           applyPhoto(slot, dataUrl);
-          try { localStorage.setItem(key, dataUrl); } catch (_) {}
+          try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
           updateShareBtn();
         });
       };
@@ -372,30 +395,70 @@ if (VIEW_MODE) {
   });
 }
 
-/* ── Save all photos explicitly to localStorage ── */
-function saveAllPhotos() {
+/* ── Save Photos: upload to Vercel Blob + persist manifest server-side ── */
+async function saveAllPhotos() {
   const btn = document.getElementById('save-btn');
   const txt = document.querySelector('.save-text');
   if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Saving…'; }
 
-  let saved = 0, failed = 0;
-  document.querySelectorAll('.photo-slot.has-photo').forEach(slot => {
-    const key = 'photo__' + (slot.dataset.label || slot.className);
-    const img = slot.querySelector('.slot-photo');
-    if (!img || !img.src || img.src === window.location.href) return;
-    try { localStorage.setItem(key, img.src); saved++; }
-    catch (_) { failed++; }
-  });
-
-  setTimeout(() => {
+  const slots = Array.from(document.querySelectorAll('.photo-slot.has-photo'));
+  if (!slots.length) {
     if (btn) btn.disabled = false;
-    if (txt) {
-      txt.textContent = failed > 0
-        ? `⚠ ${failed} too large — try smaller photos`
-        : `✓ ${saved} photo${saved !== 1 ? 's' : ''} saved`;
-      setTimeout(() => { if (txt) txt.textContent = 'Save Photos'; }, 3000);
+    if (txt) { txt.textContent = 'Nothing to save'; setTimeout(() => { txt.textContent = 'Save Photos'; }, 2000); }
+    return;
+  }
+
+  const manifest = {};
+  let i = 0;
+  for (const slot of slots) {
+    const img   = slot.querySelector('.slot-photo');
+    const label = slot.dataset.label || slot.className;
+    if (!img || !img.src || img.src === window.location.href) continue;
+    i++;
+    if (txt) txt.textContent = `Saving ${i}/${slots.length}…`;
+
+    let url = img.src;
+
+    /* Upload data URIs to Vercel Blob so they get a permanent URL */
+    if (url.startsWith('data:')) {
+      try {
+        const res  = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataUrl: url, filename: `saved-${label}-${Date.now()}.jpg` })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.url) {
+          url    = data.url;
+          img.src = url;  /* swap data URI in DOM with permanent blob URL */
+        }
+      } catch (_) {}
     }
-  }, 350);
+
+    manifest[label] = url;
+    /* Cache locally too — smaller now that it's a URL not a data URI */
+    try { localStorage.setItem('photo__' + label, url); } catch (_) {}
+  }
+
+  /* Persist the manifest server-side */
+  let serverOk = false;
+  try {
+    const res = await fetch('/api/save-photos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photos: manifest })
+    });
+    serverOk = res.ok;
+  } catch (_) {}
+
+  if (btn) btn.disabled = false;
+  if (txt) {
+    const n = Object.keys(manifest).length;
+    txt.textContent = serverOk
+      ? `✓ ${n} photo${n !== 1 ? 's' : ''} saved`
+      : `✓ ${n} saved locally`;
+    setTimeout(() => { if (txt) txt.textContent = 'Save Photos'; }, 3000);
+  }
 }
 
 /* ══════════════════════════════════════════════
