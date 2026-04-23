@@ -201,6 +201,38 @@ if (VIEW_MODE) {
     })
     .catch(() => { /* silently ignore — localStorage already applied */ });
 
+  /* ── Auto-persist: upload to Vercel Blob + save manifest silently ── */
+  async function autoPersistPhoto(label, dataUrl) {
+    try {
+      const res  = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dataUrl, filename: `photo-${label}-${Date.now()}.jpg` })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!data.url) return;
+
+      /* Swap data URI for permanent blob URL in DOM + localStorage */
+      const slot = document.querySelector(`.photo-slot[data-label="${label}"]`);
+      const img  = slot && slot.querySelector('.slot-photo');
+      if (img) img.src = data.url;
+      try { localStorage.setItem('photo__' + label, data.url); } catch (_) {}
+
+      /* Rebuild the full manifest from every filled slot and save it */
+      const manifest = {};
+      document.querySelectorAll('.photo-slot.has-photo').forEach(s => {
+        const lbl = s.dataset.label || s.className;
+        const im  = s.querySelector('.slot-photo');
+        if (im && im.src && !im.src.startsWith('data:')) manifest[lbl] = im.src;
+      });
+      await fetch('/api/save-photos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photos: manifest })
+      });
+    } catch (_) { /* silent — photo is already shown from localStorage */ }
+  }
+
   /* ── Wire upload click handlers ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
@@ -215,6 +247,8 @@ if (VIEW_MODE) {
           const label = slot.dataset.label || slot.className;
           applyPhoto(slot, dataUrl);
           try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
+          /* Persist to server in background so any device sees the photo */
+          autoPersistPhoto(label, dataUrl);
         });
       };
       inp.click();
