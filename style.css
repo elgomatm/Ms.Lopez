@@ -576,6 +576,11 @@ body:has(a:hover) #cur-ring {
   align-self: flex-start;
   min-height: 180px;
 }
+.hobbies-photos .photo-slot:nth-child(4) {
+  width: 82%;
+  align-self: flex-end;
+  min-height: 180px;
+}
 
 /* Switch: large top, two side-by-side below */
 .switch-photos {
@@ -898,6 +903,9 @@ body:has(a:hover) #cur-ring {
   .sec { padding: 90px 32px; }
   .sec-layout, .sec-layout.rev { grid-template-columns: 1fr; direction: ltr; }
   .sec-layout.rev > * { direction: ltr; }
+  /* Always show text/heading before photos on mobile */
+  .sec-layout.rev > .photo-group { order: 2; }
+  .sec-layout.rev > .sec-left    { order: 1; }
   .sec-right { align-items: center; }
   .photo-slot.lg { width: 100%; max-width: 340px; height: 320px; }
   .photo-slot { width: 100%; max-width: 300px; height: 260px; }
