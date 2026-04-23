@@ -55,10 +55,29 @@ updateSideNav();
 ══════════════════════════════════════════════ */
 const revealClasses = ['.reveal-up', '.reveal-left', '.reveal-right', '.reveal-heading', '.reveal-scale'];
 
+/* Typewriter — writes heading text out character by character */
+function typewrite(el) {
+  if (el.dataset.typed) return;
+  el.dataset.typed = '1';
+  const text  = el.textContent.trim();
+  const delay = (parseFloat(el.style.getPropertyValue('--d')) || 0) * 1000;
+  el.textContent = '';
+  el.style.opacity = '1';
+  el.style.pointerEvents = 'auto';
+  setTimeout(() => {
+    let i = 0;
+    const tick = setInterval(() => {
+      el.textContent = text.slice(0, ++i);
+      if (i >= text.length) clearInterval(tick);
+    }, 52);
+  }, delay);
+}
+
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
+      if (e.target.classList.contains('scramble')) typewrite(e.target);
       revealObserver.unobserve(e.target);
     }
   });
@@ -146,35 +165,43 @@ if (VIEW_MODE) {
 } else {
   /* ── Edit mode: restore from localStorage + wire upload clicks ── */
 
-  /* Compress image to max 1400px / JPEG 0.82 before storing */
-  function compressImage(file, callback) {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      const MAX = 1200;  /* cap longest side at 1200 px */
-      let w = img.naturalWidth, h = img.naturalHeight;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else        { w = Math.round(w * MAX / h); h = MAX; }
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
-
-      /* Step quality down until the base64 string is under 3.5 MB
-         (leaves headroom for the 5 MB /api/upload body limit)       */
-      const TARGET = 3.5 * 1024 * 1024;
-      let quality = 0.80;
-      let dataUrl  = canvas.toDataURL('image/jpeg', quality);
-      while (dataUrl.length > TARGET && quality > 0.25) {
-        quality -= 0.08;
-        dataUrl  = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
-      }
-      callback(dataUrl);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); callback(null); };
-    img.src = url;
+  /* Compress a data-URL in background for server save (canvas may fail silently) */
+  function compressForSave(rawUrl, label) {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const MAX = 1200;
+          let w = img.naturalWidth, h = img.naturalHeight;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else        { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const TARGET = 3.5 * 1024 * 1024;
+          let quality = 0.82;
+          let dataUrl = canvas.toDataURL('image/jpeg', quality);
+          while (dataUrl.length > TARGET && quality > 0.25) {
+            quality -= 0.08;
+            dataUrl = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
+          }
+          try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
+          autoPersistPhoto(label, dataUrl);
+        } catch (_) {
+          /* canvas failed — persist raw url instead */
+          try { localStorage.setItem('photo__' + label, rawUrl); } catch (_) {}
+          autoPersistPhoto(label, rawUrl);
+        }
+      };
+      img.onerror = () => {
+        try { localStorage.setItem('photo__' + label, rawUrl); } catch (_) {}
+      };
+      img.src = rawUrl;
+    } catch (_) {
+      try { localStorage.setItem('photo__' + label, rawUrl); } catch (_) {}
+    }
   }
 
   /* ── Restore from localStorage immediately (instant), then sync from server ── */
@@ -236,23 +263,30 @@ if (VIEW_MODE) {
   /* ── Wire upload click handlers ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
-      const inp    = document.createElement('input');
-      inp.type     = 'file';
-      inp.accept   = 'image/*';
+      const inp = document.createElement('input');
+      inp.type  = 'file';
+      inp.accept = 'image/*';
       inp.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
-      document.body.appendChild(inp);          /* must be in DOM for iOS Safari */
+      document.body.appendChild(inp);   /* must be in DOM for iOS Safari */
+
       inp.addEventListener('change', e => {
-        document.body.removeChild(inp);
+        try { document.body.removeChild(inp); } catch (_) {}
         const file = e.target.files[0];
         if (!file) return;
-        compressImage(file, dataUrl => {
-          if (!dataUrl) return;
-          const label = slot.dataset.label || slot.className;
-          applyPhoto(slot, dataUrl);
-          try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
-          autoPersistPhoto(label, dataUrl);
-        });
+
+        /* Show photo immediately via FileReader — no canvas needed */
+        const reader = new FileReader();
+        reader.onload = evt => {
+          const rawUrl = evt.target.result;
+          const label  = slot.dataset.label || slot.className;
+          applyPhoto(slot, rawUrl);
+          /* Compress + persist to server in background */
+          compressForSave(rawUrl, label);
+        };
+        reader.onerror = () => { /* silent */ };
+        reader.readAsDataURL(file);
       });
+
       inp.click();
     });
   });
