@@ -28,28 +28,54 @@ async function generateSharePage() {
     return;
   }
 
-  /* ── 1. Snapshot DOM ── */
-  let bodyHtml = document.body.innerHTML;
-  bodyHtml = bodyHtml.replace(/(\bclass="[^"]*)\bin\b\s*/g, '$1');
+  /* ── 1. Snapshot DOM, strip animation classes, remove edit-only elements ── */
+  let rawHtml = document.body.innerHTML;
+  rawHtml = rawHtml.replace(/(\bclass="[^"]*)\bin\b\s*/g, '$1');
   const shareDoc = new DOMParser().parseFromString(
-    `<!DOCTYPE html><html><body>${bodyHtml}</body></html>`, 'text/html'
+    `<!DOCTYPE html><html><body>${rawHtml}</body></html>`, 'text/html'
   );
   shareDoc.querySelectorAll('.photo-slot:not(.has-photo)').forEach(el => el.remove());
   ['cur-dot', 'cur-ring', 'share-btn-wrap'].forEach(id => shareDoc.getElementById(id)?.remove());
   shareDoc.querySelector('script[src="script.js"]')?.remove();
-  bodyHtml = shareDoc.body.innerHTML;
 
-  /* ── 2. Inline CSS + JS so the file is 100% self-contained ── */
-  if (txt) txt.textContent = 'Packaging…';
-  let cssText = '', jsText = '';
-  try {
-    const [cssRes, jsRes] = await Promise.all([fetch('./style.css'), fetch('./script.js')]);
-    cssText = await cssRes.text();
-    jsText  = await jsRes.text();
-  } catch (e) { console.warn('Asset fetch failed — falling back to linked files', e); }
+  /* ── 2. Upload each photo to Vercel Blob one at a time (avoids 4.5 MB limit) ── */
+  const photoImgs = Array.from(shareDoc.querySelectorAll('.slot-photo[src^="data:"]'));
+  let i = 0;
+  for (const img of photoImgs) {
+    i++;
+    if (txt) txt.textContent = `Uploading photo ${i}/${photoImgs.length}…`;
+    try {
+      const res  = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dataUrl:  img.src,
+          filename: `photo-${Date.now()}-${i}.jpg`
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data.setup) {
+        /* Blob not yet wired up */
+        if (hint) {
+          hint.innerHTML =
+            '<strong style="color:#fff">One-time setup (30 sec):</strong><br>' +
+            '1. <a href="https://vercel.com/dashboard" target="_blank" style="color:#fff">Vercel dashboard</a> → your project → <strong>Storage</strong> tab<br>' +
+            '2. Create Database → <strong>Blob</strong> → Connect to project<br>' +
+            '3. Click the button again ✓';
+        }
+        if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
+        return;
+      }
+      if (res.ok && data.url) img.src = data.url; /* swap data URI → blob URL */
+    } catch (_) { /* keep original data URI as fallback */ }
+  }
 
-  const fullHtml = cssText
-    ? `<!DOCTYPE html>
+  /* ── 3. Build the final HTML — photos are now blob URLs so it's tiny ── */
+  if (txt) txt.textContent = 'Finalising…';
+  const bodyHtml  = shareDoc.body.innerHTML;
+  const origin    = window.location.origin;   /* absolute URL so CSS/JS load from Vercel */
+
+  const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -58,70 +84,37 @@ async function generateSharePage() {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
-  <style>${cssText}<\/style>
+  <link rel="stylesheet" href="${origin}/style.css">
   <script>window.VIEW_MODE = true;<\/script>
 </head>
 <body>${bodyHtml}
-<script>${jsText}<\/script>
-</body>
-</html>`
-    : `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malik Elgomati \u2014 For Ms. Lopes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script>window.VIEW_MODE = true;<\/script>
-</head>
-<body>${bodyHtml}
-<script src="script.js"><\/script>
+<script src="${origin}/script.js"><\/script>
 </body>
 </html>`;
 
-  /* ── 3. Upload via /api/share (Vercel Blob, server-side) ── */
-  if (txt) txt.textContent = 'Uploading…';
-
+  /* ── 4. Upload the lightweight HTML ── */
+  if (txt) txt.textContent = 'Uploading page…';
   let shareUrl;
   try {
-    const apiRes = await fetch('/api/share', {
+    const res  = await fetch('/api/share', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ html: fullHtml })
     });
-
-    const data = await apiRes.json().catch(() => ({}));
-
-    if (!apiRes.ok) {
-      if (data.setup) {
-        /* Blob storage not yet connected — show one-time setup instructions */
-        if (hint) {
-          hint.innerHTML =
-            '<strong style="color:#fff">One-time setup needed (30 sec):</strong><br>' +
-            '1. Open your <a href="https://vercel.com/dashboard" target="_blank" style="color:#fff">Vercel dashboard</a><br>' +
-            '2. Click your project → <strong>Storage</strong> tab<br>' +
-            '3. Create Database → <strong>Blob</strong> → Connect to project<br>' +
-            '4. Come back here and click the button again ✓';
-        }
-      } else {
-        alert('Upload error: ' + (data.error || apiRes.status));
-      }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert('Error uploading page: ' + (data.error || res.status));
       if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
       return;
     }
-
     shareUrl = data.url;
-  } catch (err) {
-    /* /api/share not found — probably running on localhost, not Vercel */
-    alert('This button only works on the live Vercel site.\nOpen the Vercel URL and try there.');
+  } catch (_) {
+    alert('Could not reach /api/share — are you on the live Vercel site?');
     if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
     return;
   }
 
-  /* ── 4. Copy and show the link ── */
+  /* ── 5. Show the link ── */
   try { await navigator.clipboard.writeText(shareUrl); } catch (_) {}
 
   if (txt) txt.textContent = '✓ Link copied!';

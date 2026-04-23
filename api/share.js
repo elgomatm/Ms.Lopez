@@ -1,22 +1,25 @@
+/* ── api/share.js ───────────────────────────────
+   Stores the final (lightweight) HTML in Vercel
+   Blob and returns a permanent public URL.
+   Photos are already uploaded as separate blobs
+   so this payload is just markup — always small.
+─────────────────────────────────────────────── */
 const { put } = require('@vercel/blob');
 
-/* ── Body-size limit: photos can be several MB ── */
-const handler = async function (req, res) {
+const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')   return res.status(405).json({ error: 'POST only' });
 
-  /* Tell the browser how to set up Blob if the env var is missing */
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return res.status(503).json({
       setup: true,
       message:
-        'In your Vercel dashboard: open this project → Storage tab → ' +
+        'Open your Vercel dashboard → your project → Storage tab → ' +
         'Create Database → Blob → give it any name → Connect to Project. ' +
-        "Vercel adds the token automatically — then click 'Get Share Link' again."
+        "Then click 'Get Share Link' again."
     });
   }
 
@@ -34,8 +37,6 @@ const handler = async function (req, res) {
   }
 };
 
-handler.config = {
-  api: { bodyParser: { sizeLimit: '25mb' } }
-};
-
+/* HTML without base64 photos is < 100 KB */
+handler.config = { api: { bodyParser: { sizeLimit: '2mb' } } };
 module.exports = handler;
