@@ -576,11 +576,6 @@ body:has(a:hover) #cur-ring {
   align-self: flex-start;
   min-height: 180px;
 }
-.hobbies-photos .photo-slot:nth-child(4) {
-  width: 82%;
-  align-self: flex-end;
-  min-height: 180px;
-}
 
 /* Switch: large top, two side-by-side below */
 .switch-photos {
@@ -853,23 +848,15 @@ body:has(a:hover) #cur-ring {
   filter: blur(0);
 }
 
-/* ── Cursive write-in for section headings ── */
-@keyframes writeCursive {
-  from { clip-path: inset(0 102% 0 0); }
-  to   { clip-path: inset(0 -4%  0 0); }
-}
+/* ── Cursive write-in — JS typewriter handles reveal, CSS just hides initially ── */
 .reveal-heading.scramble {
-  opacity: 1;
+  opacity: 0;
   transform: none;
   filter: none;
   transition: none;
-  clip-path: inset(0 102% 0 0);
-  pointer-events: none; /* invisible — don't block taps on slots below */
+  pointer-events: none;
 }
-.reveal-heading.scramble.in {
-  pointer-events: auto;
-  animation: writeCursive 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--d, 0s) both;
-}
+/* opacity + pointer-events restored by typewrite() in JS */
 
 .reveal-scale {
   opacity: 0;
