@@ -165,43 +165,39 @@ if (VIEW_MODE) {
 } else {
   /* ── Edit mode: restore from localStorage + wire upload clicks ── */
 
-  /* Compress a data-URL in background for server save (canvas may fail silently) */
-  function compressForSave(rawUrl, label) {
-    try {
-      const img = new Image();
-      img.onload = () => {
-        try {
-          const MAX = 1200;
-          let w = img.naturalWidth, h = img.naturalHeight;
-          if (w > MAX || h > MAX) {
-            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-            else        { w = Math.round(w * MAX / h); h = MAX; }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const TARGET = 3.5 * 1024 * 1024;
-          let quality = 0.82;
-          let dataUrl = canvas.toDataURL('image/jpeg', quality);
-          while (dataUrl.length > TARGET && quality > 0.25) {
-            quality -= 0.08;
-            dataUrl = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
-          }
-          try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
-          autoPersistPhoto(label, dataUrl);
-        } catch (_) {
-          /* canvas failed — persist raw url instead */
-          try { localStorage.setItem('photo__' + label, rawUrl); } catch (_) {}
-          autoPersistPhoto(label, rawUrl);
+  /* Compress file in background → swap blob URL in slot → save to localStorage + server */
+  function compressForSave(file, label) {
+    const tmpUrl = URL.createObjectURL(file);
+    const img    = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(tmpUrl);
+      try {
+        const MAX = 1200;
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else        { w = Math.round(w * MAX / h); h = MAX; }
         }
-      };
-      img.onerror = () => {
-        try { localStorage.setItem('photo__' + label, rawUrl); } catch (_) {}
-      };
-      img.src = rawUrl;
-    } catch (_) {
-      try { localStorage.setItem('photo__' + label, rawUrl); } catch (_) {}
-    }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const TARGET = 3.5 * 1024 * 1024;
+        let quality = 0.82;
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+        while (dataUrl.length > TARGET && quality > 0.25) {
+          quality -= 0.08;
+          dataUrl = canvas.toDataURL('image/jpeg', Math.max(quality, 0.25));
+        }
+        /* Swap the temporary object URL in the slot with the compressed data URL */
+        const s  = document.querySelector(`.photo-slot[data-label="${label}"]`);
+        const im = s && s.querySelector('.slot-photo');
+        if (im && im.src.startsWith('blob:')) im.src = dataUrl;
+        try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
+        autoPersistPhoto(label, dataUrl);
+      } catch (_) { /* canvas failed — object URL still showing, that's fine */ }
+    };
+    img.onerror = () => { URL.revokeObjectURL(tmpUrl); };
+    img.src = tmpUrl;
   }
 
   /* ── Restore from localStorage immediately (instant), then sync from server ── */
@@ -273,18 +269,12 @@ if (VIEW_MODE) {
         try { document.body.removeChild(inp); } catch (_) {}
         const file = e.target.files[0];
         if (!file) return;
-
-        /* Show photo immediately via FileReader — no canvas needed */
-        const reader = new FileReader();
-        reader.onload = evt => {
-          const rawUrl = evt.target.result;
-          const label  = slot.dataset.label || slot.className;
-          applyPhoto(slot, rawUrl);
-          /* Compress + persist to server in background */
-          compressForSave(rawUrl, label);
-        };
-        reader.onerror = () => { /* silent */ };
-        reader.readAsDataURL(file);
+        const label     = slot.dataset.label || slot.className;
+        /* createObjectURL has no size limit — shows any photo instantly */
+        const objectUrl = URL.createObjectURL(file);
+        applyPhoto(slot, objectUrl);
+        /* Compress in background → swap to data URL → save locally + server */
+        compressForSave(file, label);
       });
 
       inp.click();
