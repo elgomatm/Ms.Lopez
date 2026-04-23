@@ -220,7 +220,7 @@ if (VIEW_MODE) {
       document.querySelectorAll('.photo-slot.has-photo').forEach(sl => {
         const lbl  = sl.dataset.label || sl.className;
         const slIm = sl.querySelector('.slot-photo');
-        if (slIm && slIm.src && !slIm.src.startsWith('blob:')) manifest[lbl] = slIm.src;
+        if (slIm && slIm.src && slIm.src.startsWith('https://')) manifest[lbl] = slIm.src;
       });
       await fetch('/api/save-photos', {
         method: 'POST',
@@ -230,11 +230,17 @@ if (VIEW_MODE) {
     } catch (_) { /* silent — photo still shows via object URL for this session */ }
   }
 
-  /* ── Restore from localStorage immediately (instant), then sync from server ── */
+  /* ── Restore from localStorage — only accept permanent https:// blob URLs ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     const key   = 'photo__' + (slot.dataset.label || slot.className);
     const saved = localStorage.getItem(key);
-    if (saved) applyPhoto(slot, saved);
+    if (!saved) return;
+    if (saved.startsWith('https://')) {
+      applyPhoto(slot, saved);
+    } else {
+      /* Stale data URL from an old session — purge it */
+      try { localStorage.removeItem(key); } catch (_) {}
+    }
   });
 
   /* Fetch server manifest in background — fills any slots not in localStorage
@@ -246,9 +252,12 @@ if (VIEW_MODE) {
       document.querySelectorAll('.photo-slot').forEach(slot => {
         const label = slot.dataset.label || slot.className;
         const url   = photos[label];
-        if (!url) return;
+        /* Only use real blob URLs — never data URLs from old sessions */
+        if (!url || !url.startsWith('https://')) return;
+        /* Never overwrite a slot that already has a fresh photo showing */
+        const existing = slot.querySelector('.slot-photo');
+        if (existing && existing.src) return;
         applyPhoto(slot, url);
-        /* Cache the blob URL locally (tiny — just a URL string) */
         try { localStorage.setItem('photo__' + label, url); } catch (_) {}
       });
     })
