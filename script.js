@@ -59,10 +59,6 @@ const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
-      /* if it's a heading, scramble as the blur clears */
-      if (e.target.classList.contains('scramble')) {
-        setTimeout(() => scramble(e.target), 180);
-      }
       revealObserver.unobserve(e.target);
     }
   });
@@ -74,37 +70,8 @@ document.querySelectorAll(revealClasses.join(', '))
 /* Hero fires immediately */
 setTimeout(() => {
   document.querySelectorAll('#hero .reveal-heading, #hero .reveal-up, #hero .reveal-scale')
-    .forEach(el => {
-      el.classList.add('in');
-      if (el.classList.contains('scramble')) scramble(el);
-    });
+    .forEach(el => el.classList.add('in'));
 }, 120);
-
-/* ══════════════════════════════════════════════
-   SCRAMBLE TEXT on section headings
-══════════════════════════════════════════════ */
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-function scramble(el) {
-  if (el.dataset.scrambled) return;
-  el.dataset.scrambled = '1';
-  const original = el.textContent.trim();
-  let iter = 0;
-  const interval = setInterval(() => {
-    el.textContent = original.split('').map((ch, i) => {
-      if (ch === ' ') return ' ';
-      if (i < iter)  return original[i];
-      return CHARS[Math.floor(Math.random() * CHARS.length)];
-    }).join('');
-    iter += 0.4;
-    if (iter >= original.length) {
-      el.textContent = original;
-      clearInterval(interval);
-    }
-  }, 28);
-}
-
-/* scramble is now triggered directly inside revealObserver above */
 
 /* ══════════════════════════════════════════════
    PARALLAX — hero bg text + photo wrap

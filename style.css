@@ -293,9 +293,10 @@ body:has(a:hover) #cur-ring {
   color: rgba(255,255,255,0.55); margin-bottom: 14px;
 }
 .sec-heading {
-  font-family: var(--display);
-  font-size: clamp(2.8rem, 5vw, 4.8rem);
-  letter-spacing: 0.04em; line-height: 1.0;
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: clamp(3.2rem, 5.5vw, 5.8rem);
+  letter-spacing: 0.01em; line-height: 1.05;
   color: #fff;
   margin-bottom: 36px;
 }
@@ -845,6 +846,23 @@ body:has(a:hover) #cur-ring {
   opacity: 1;
   transform: none;
   filter: blur(0);
+}
+
+/* ── Cursive write-in for section headings ── */
+@keyframes writeCursive {
+  from { clip-path: inset(0 102% 0 0); }
+  to   { clip-path: inset(0 -4%  0 0); }
+}
+/* Override the blur/slide for elements that use the write-in animation */
+.reveal-heading.scramble {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+  clip-path: inset(0 102% 0 0);
+}
+.reveal-heading.scramble.in {
+  animation: writeCursive 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) var(--d, 0s) both;
 }
 
 .reveal-scale {
