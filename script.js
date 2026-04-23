@@ -197,7 +197,8 @@ if (VIEW_MODE) {
   }
 
   /* Upload file to Vercel Blob, then swap object URL → permanent blob URL in slot */
-  async function uploadAndPersist(file, label, objectUrl) {
+  async function uploadAndPersist(file, slot, objectUrl) {
+    const label = slot.dataset.label || slot.className;
     try {
       const dataUrl = await compressToDataUrl(file);
       const res  = await fetch('/api/upload', {
@@ -208,11 +209,14 @@ if (VIEW_MODE) {
       const data = await res.json().catch(() => ({}));
       if (!data.url) return;
 
-      /* objectUrl → permanent Vercel Blob URL (both are normal https/blob URLs, no size limits) */
-      URL.revokeObjectURL(objectUrl);
-      const s  = document.querySelector(`.photo-slot[data-label="${label}"]`);
-      const im = s && s.querySelector('.slot-photo');
-      if (im) im.src = data.url;
+      /* Swap to permanent Vercel Blob URL — use slot directly (never re-query by label) */
+      /* Do NOT revoke objectUrl first — set new src before browser can flash broken state */
+      const im = slot.querySelector('.slot-photo');
+      if (im) {
+        im.src = data.url;
+        /* Only revoke old objectUrl AFTER new src is set */
+        URL.revokeObjectURL(objectUrl);
+      }
       try { localStorage.setItem('photo__' + label, data.url); } catch (_) {}
 
       /* Rebuild + save server manifest */
@@ -276,12 +280,11 @@ if (VIEW_MODE) {
         try { document.body.removeChild(inp); } catch (_) {}
         const file = e.target.files[0];
         if (!file) return;
-        const label     = slot.dataset.label || slot.className;
         /* createObjectURL has no size limit — shows any photo instantly */
         const objectUrl = URL.createObjectURL(file);
         applyPhoto(slot, objectUrl);
         /* Compress in background → upload to Vercel Blob → swap objectUrl to permanent URL */
-        uploadAndPersist(file, label, objectUrl);
+        uploadAndPersist(file, slot, objectUrl);
       });
 
       inp.click();
