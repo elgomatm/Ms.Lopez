@@ -454,6 +454,8 @@ body:has(a:hover) #cur-ring {
   padding: 10px 10px 46px;
   min-height: unset;
   height: auto;
+  width: fit-content;   /* frame shrinks to exactly the photo's width */
+  max-width: 100%;      /* never overflow the container */
   overflow: visible;
   /* shadow layers for depth */
   box-shadow:
@@ -473,19 +475,20 @@ body:has(a:hover) #cur-ring {
     0 40px 80px rgba(0,0,0,0.14);
 }
 
-/* the image itself */
+/* the image itself — scales down to fit, never crops, frame hugs it */
 .slot-photo {
   display: block;
-  width: 100%;
-  height: 260px;          /* consistent height so no photo ever dwarfs the page */
-  object-fit: cover;      /* fills the frame cleanly — no letterbox, no stretching */
-  object-position: center;
+  width: auto;
+  max-width: 280px;   /* caps how wide any photo gets */
+  height: auto;
+  max-height: 280px;  /* caps tall portrait shots — both constraints maintain aspect ratio */
   border-radius: 1px;
 }
 
-/* grid slots in sports: keep grid-sized, object-fit cover */
+/* grid slots in sports: full cell coverage, object-fit cover */
 .photo-slot.grid-slot.has-photo {
   padding: 8px;
+  width: 100% !important;   /* override fit-content for grid cells */
   height: 100% !important;
   transform: rotate(var(--rot, -1deg));
   overflow: hidden;
@@ -493,7 +496,8 @@ body:has(a:hover) #cur-ring {
 .photo-slot.grid-slot.has-photo .slot-photo {
   width: 100%;
   height: calc(100% - 16px);
-  max-height: none;       /* override global cap for grid slots */
+  max-width: none;
+  max-height: none;
   object-fit: cover;
   background: none;
   border-radius: 1px;
@@ -944,10 +948,10 @@ body:has(a:hover) #cur-ring {
   .photo-slot.lg { width: 100%; max-width: 340px; height: 320px; }
   .photo-slot { width: 100%; max-width: 300px; height: 260px; }
   .photo-slot.sm { width: 46%; height: 200px; }
-  /* filled slots: fixed photo height ensures nothing dwarfs the page on mobile */
+  /* filled slots: fit-content + max-width keeps them in bounds on mobile */
   .photo-slot.has-photo,
   .photo-slot.lg.has-photo,
-  .photo-slot.sm.has-photo { height: auto; max-width: 100%; }
+  .photo-slot.sm.has-photo { height: auto; width: fit-content; max-width: 100%; }
   .photo-grid { grid-template-columns: 1fr 1fr; }
   .grid-slot.tall { grid-row: span 1; }
   #nav { padding: 16px 24px; }
