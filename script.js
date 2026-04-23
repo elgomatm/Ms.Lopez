@@ -2,9 +2,9 @@
 
 /* ══════════════════════════════════════════════
    SHARE PAGE GENERATOR
-   Pushes a fully self-contained share.html to
-   GitHub so Vercel deploys it — Ms. Lopes gets
-   a real link, not a file download.
+   Builds a self-contained HTML snapshot and
+   uploads it to Vercel Blob via /api/share —
+   returns a real, permanent shareable URL.
 ══════════════════════════════════════════════ */
 function updateShareBtn() {
   const wrap = document.getElementById('share-btn-wrap');
@@ -12,14 +12,6 @@ function updateShareBtn() {
   const hasPhotos = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i))
     .some(k => k && k.startsWith('photo__'));
   wrap.classList.toggle('visible', hasPhotos);
-}
-
-/* UTF-8 → base64 (handles emoji / non-ASCII safely) */
-function utf8ToBase64(str) {
-  const bytes = new TextEncoder().encode(str);
-  let bin = '';
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
 }
 
 async function generateSharePage() {
@@ -48,7 +40,7 @@ async function generateSharePage() {
   bodyHtml = shareDoc.body.innerHTML;
 
   /* ── 2. Inline CSS + JS so the file is 100% self-contained ── */
-  if (txt) txt.textContent = 'Fetching assets…';
+  if (txt) txt.textContent = 'Packaging…';
   let cssText = '', jsText = '';
   try {
     const [cssRes, jsRes] = await Promise.all([fetch('./style.css'), fetch('./script.js')]);
@@ -56,8 +48,7 @@ async function generateSharePage() {
     jsText  = await jsRes.text();
   } catch (e) { console.warn('Asset fetch failed — falling back to linked files', e); }
 
-  const inlined = !!(cssText && jsText);
-  const fullHtml = inlined
+  const fullHtml = cssText
     ? `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,88 +82,58 @@ async function generateSharePage() {
 </body>
 </html>`;
 
-  /* ── 3. Get GitHub token (prompted once, stored) ── */
-  let token = localStorage.getItem('gh_token');
-  if (!token) {
-    if (txt) txt.textContent = 'Needs token…';
-    token = prompt(
-      'One-time GitHub setup — takes 30 seconds:\n\n' +
-      '1. Open: github.com/settings/tokens/new\n' +
-      '2. Note: "Ms. Lopes share"\n' +
-      '3. Tick "repo" (full repo access)\n' +
-      '4. Click Generate token\n' +
-      '5. Paste it below\n\n' +
-      "It's saved locally — you'll never see this again."
-    );
-    if (!token) {
+  /* ── 3. Upload via /api/share (Vercel Blob, server-side) ── */
+  if (txt) txt.textContent = 'Uploading…';
+
+  let shareUrl;
+  try {
+    const apiRes = await fetch('/api/share', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ html: fullHtml })
+    });
+
+    const data = await apiRes.json().catch(() => ({}));
+
+    if (!apiRes.ok) {
+      if (data.setup) {
+        /* Blob storage not yet connected — show one-time setup instructions */
+        if (hint) {
+          hint.innerHTML =
+            '<strong style="color:#fff">One-time setup needed (30 sec):</strong><br>' +
+            '1. Open your <a href="https://vercel.com/dashboard" target="_blank" style="color:#fff">Vercel dashboard</a><br>' +
+            '2. Click your project → <strong>Storage</strong> tab<br>' +
+            '3. Create Database → <strong>Blob</strong> → Connect to project<br>' +
+            '4. Come back here and click the button again ✓';
+        }
+      } else {
+        alert('Upload error: ' + (data.error || apiRes.status));
+      }
       if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
       return;
     }
-    localStorage.setItem('gh_token', token.trim());
-    token = token.trim();
-  }
 
-  /* ── 4. Push to GitHub ── */
-  if (txt) txt.textContent = 'Pushing…';
-
-  const OWNER  = 'elgomatm';
-  const REPO   = 'Ms.Lopez';
-  const FILE   = 'share.html';
-  const BRANCH = 'main';
-  const HEADERS = {
-    Authorization: `Bearer ${token}`,
-    Accept: 'application/vnd.github+json',
-    'Content-Type': 'application/json'
-  };
-
-  /* Get existing SHA if file already exists */
-  let sha;
-  try {
-    const check = await fetch(
-      `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}?ref=${BRANCH}`,
-      { headers: HEADERS }
-    );
-    if (check.ok) sha = (await check.json()).sha;
-  } catch (_) {}
-
-  const payload = {
-    message: 'Update share page with latest photos',
-    content: utf8ToBase64(fullHtml),
-    branch: BRANCH
-  };
-  if (sha) payload.sha = sha;
-
-  const res = await fetch(
-    `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`,
-    { method: 'PUT', headers: HEADERS, body: JSON.stringify(payload) }
-  );
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    if (res.status === 401 || res.status === 403) {
-      localStorage.removeItem('gh_token');
-      alert('Token looks wrong — click the button again and enter a new one.\n\n(github.com/settings/tokens/new)');
-    } else {
-      alert('GitHub error ' + res.status + ': ' + (err.message || 'unknown'));
-    }
+    shareUrl = data.url;
+  } catch (err) {
+    /* /api/share not found — probably running on localhost, not Vercel */
+    alert('This button only works on the live Vercel site.\nOpen the Vercel URL and try there.');
     if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
     return;
   }
 
-  /* ── 5. Show the link ── */
-  const shareUrl = window.location.origin + '/' + FILE;
+  /* ── 4. Copy and show the link ── */
   try { await navigator.clipboard.writeText(shareUrl); } catch (_) {}
 
   if (txt) txt.textContent = '✓ Link copied!';
   if (hint) {
     hint.innerHTML =
       `<a href="${shareUrl}" target="_blank" style="color:inherit;font-weight:600;word-break:break-all">${shareUrl}</a>` +
-      `<br><span style="opacity:0.7;font-size:0.78rem">Vercel deploys in ~30 s — then it's live</span>`;
+      `<br><span style="opacity:0.7;font-size:0.78rem">Copied — send it to Ms. Lopes ✓</span>`;
   }
 
   setTimeout(() => {
     if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    if (hint) hint.textContent = 'Pushes directly to your site — send her the link';
+    if (hint) hint.textContent = 'Click to generate a fresh shareable link';
   }, 12000);
 }
 
