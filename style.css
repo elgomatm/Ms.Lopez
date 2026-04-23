@@ -912,3 +912,113 @@ body:has(a:hover) #cur-ring {
   .link-cards { grid-template-columns: 1fr; }
   .closing-inner { text-align: left; }
 }
+
+/* ══════════════════════════════════════════════
+   GLOBAL OVERFLOW GUARD
+══════════════════════════════════════════════ */
+html, body { overflow-x: hidden; }
+
+/* ══════════════════════════════════════════════
+   MOUSE SPOTLIGHT
+══════════════════════════════════════════════ */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(700px circle at var(--spot-x, -999px) var(--spot-y, -999px),
+    rgba(255,255,255,0.028), transparent 50%);
+  transition: background 0.1s;
+}
+
+/* ══════════════════════════════════════════════
+   SCROLLING TICKER
+══════════════════════════════════════════════ */
+.exotics-ticker {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 18px 0;
+  margin-bottom: 56px;
+  margin-top: 16px;
+}
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+  white-space: nowrap;
+  animation: tickerRoll 28s linear infinite;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  font-weight: 600;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes tickerRoll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.t-dot {
+  color: rgba(255,255,255,0.2);
+  font-size: 0.45rem;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   SHIMMER GRADIENT — Exotics heading
+══════════════════════════════════════════════ */
+.exotics-sec .sec-heading {
+  background: linear-gradient(
+    100deg,
+    #fff 0%,
+    rgba(255,255,255,0.55) 30%,
+    #fff 50%,
+    rgba(255,255,255,0.75) 75%,
+    #fff 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 5s linear infinite;
+}
+@keyframes shimmerText {
+  0%   { background-position: 250% center; }
+  100% { background-position: -250% center; }
+}
+
+/* ══════════════════════════════════════════════
+   STAT STRIP — Mobile
+══════════════════════════════════════════════ */
+@media (max-width: 960px) {
+  .stat-strip {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    flex-direction: unset;
+  }
+  .stat-strip .stat:nth-child(4),
+  .stat-strip .stat:nth-child(5) {
+    border-top: 1px solid rgba(255,255,255,0.16);
+  }
+  .stat-num { font-size: 1.8rem !important; }
+  .stat { padding: 18px 12px; }
+  .bullets li { word-break: break-word; overflow-wrap: break-word; }
+  .exotics-layout { gap: 48px; }
+  .exotics-sec { overflow-x: hidden; }
+}
+@media (max-width: 480px) {
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .stat-strip .stat:nth-child(3) {
+    border-top: 1px solid rgba(255,255,255,0.16);
+  }
+  .stat-strip .stat:nth-child(4) {
+    border-top: 1px solid rgba(255,255,255,0.16);
+  }
+  .stat-num { font-size: 1.6rem !important; }
+}

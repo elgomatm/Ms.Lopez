@@ -7,7 +7,11 @@ const dot  = document.getElementById('cur-dot');
 const ring = document.getElementById('cur-ring');
 let mx = 0, my = 0, rx = 0, ry = 0;
 
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  document.documentElement.style.setProperty('--spot-x', e.clientX + 'px');
+  document.documentElement.style.setProperty('--spot-y', e.clientY + 'px');
+});
 
 (function tickCursor() {
   requestAnimationFrame(tickCursor);
@@ -102,6 +106,13 @@ window.addEventListener('scroll', () => {
   const y = window.scrollY;
   if (heroBgText)    heroBgText.style.transform    = `translateX(${y * 0.18}px) translateY(${y * 0.12}px)`;
   if (heroPhotoWrap) heroPhotoWrap.style.transform = `translateY(${y * 0.14}px)`;
+  document.querySelectorAll('.sec-ghost').forEach(ghost => {
+    const section = ghost.closest('section');
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    const mid  = rect.top + rect.height / 2 - window.innerHeight / 2;
+    ghost.style.transform = `translateY(${mid * -0.07}px)`;
+  });
 }, { passive: true });
 
 /* ══════════════════════════════════════════════
@@ -310,3 +321,34 @@ document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.style.transform = `rotate(${rot})`;
   });
 });
+
+/* ══════════════════════════════════════════════
+   STAT COUNTERS — count up on entry
+══════════════════════════════════════════════ */
+function animateCount(el) {
+  if (el.dataset.counted) return;
+  el.dataset.counted = '1';
+  const target = parseInt(el.dataset.count, 10);
+  const suffix = el.dataset.suffix || '';
+  if (!el.dataset.count) return; /* skip "1st" type */
+  const duration = 1400;
+  const start    = performance.now();
+  const tick = now => {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3); /* ease-out cubic */
+    el.textContent = Math.floor(eased * target) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCount(e.target);
+      statObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-num[data-count]').forEach(el => statObserver.observe(el));
