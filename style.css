@@ -398,7 +398,7 @@ body:has(a:hover) #cur-ring {
 ══════════════════════════════════════════════ */
 .photo-slot {
   width: 100%;
-  min-height: 220px;
+  min-height: 160px;
   border: 1.5px dashed rgba(255,255,255,0.25);
   border-radius: 16px;
   display: flex; flex-direction: column;
@@ -538,11 +538,11 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.bg-photos .photo-slot { min-height: 260px; }
+.bg-photos .photo-slot { min-height: 190px; }
 .bg-photos .photo-slot:nth-child(2) {
   width: 76%;
   align-self: flex-end;
-  min-height: 200px;
+  min-height: 150px;
 }
 
 /* College: staggered cascade */
@@ -552,16 +552,16 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.college-photos .photo-slot { min-height: 220px; }
+.college-photos .photo-slot { min-height: 160px; }
 .college-photos .photo-slot:nth-child(2) {
   width: 84%;
   align-self: flex-end;
-  min-height: 180px;
+  min-height: 140px;
 }
 .college-photos .photo-slot:nth-child(3) {
   width: 70%;
   align-self: flex-start;
-  min-height: 160px;
+  min-height: 130px;
 }
 
 /* Hobbies: staggered trio — first wide, second offset right, third offset left */
@@ -571,16 +571,16 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.hobbies-photos .photo-slot { min-height: 200px; }
+.hobbies-photos .photo-slot { min-height: 150px; }
 .hobbies-photos .photo-slot:nth-child(2) {
   width: 80%;
   align-self: flex-end;
-  min-height: 180px;
+  min-height: 140px;
 }
 .hobbies-photos .photo-slot:nth-child(3) {
   width: 90%;
   align-self: flex-start;
-  min-height: 180px;
+  min-height: 140px;
 }
 
 /* Switch: large top, two side-by-side below */
@@ -590,12 +590,12 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.switch-photos > .photo-slot { min-height: 280px; }
+.switch-photos > .photo-slot { min-height: 200px; }
 .pg-duo {
   display: flex;
   gap: 14px;
 }
-.pg-duo .photo-slot { flex: 1; min-height: 180px; }
+.pg-duo .photo-slot { flex: 1; min-height: 130px; }
 
 .sec-right {
   display: flex; flex-direction: column;
@@ -641,13 +641,13 @@ body:has(a:hover) #cur-ring {
   display: flex; flex-direction: column; gap: 28px;
 }
 .exotics-slot-lg {
-  width: 100%; height: 300px;
+  width: 100%; height: 220px;
 }
 .exotics-slot-row {
   display: flex; gap: 16px;
 }
 .exotics-slot-sm {
-  flex: 1; height: 180px;
+  flex: 1; height: 140px;
 }
 
 /* ── Stat strip ── */
@@ -905,9 +905,9 @@ body:has(a:hover) #cur-ring {
   .sec-layout.rev > .photo-group { order: 2; }
   .sec-layout.rev > .sec-left    { order: 1; }
   .sec-right { align-items: center; }
-  .photo-slot.lg { width: 100%; max-width: 340px; height: 320px; }
-  .photo-slot { width: 100%; max-width: 300px; height: 260px; }
-  .photo-slot.sm { width: 46%; height: 200px; }
+  .photo-slot.lg { width: 100%; max-width: 300px; height: 220px; }
+  .photo-slot { width: 100%; max-width: 280px; height: 180px; }
+  .photo-slot.sm { width: 46%; height: 150px; }
   /* filled slots: fit-content + max-width keeps them in bounds on mobile */
   .photo-slot.has-photo,
   .photo-slot.lg.has-photo,
@@ -917,7 +917,7 @@ body:has(a:hover) #cur-ring {
   #nav { padding: 16px 24px; }
   #footer { padding: 90px 32px; }
   .exotics-layout { grid-template-columns: 1fr; }
-  .exotics-slot-lg { height: 240px; }
+  .exotics-slot-lg { height: 180px; }
   .stat-strip { flex-direction: row; }
   .link-cards { grid-template-columns: 1fr; }
   .closing-inner { text-align: left; }
