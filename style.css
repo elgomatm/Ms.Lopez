@@ -552,16 +552,16 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.college-photos .photo-slot { min-height: 160px; }
+.college-photos .photo-slot { min-height: 115px; }
 .college-photos .photo-slot:nth-child(2) {
   width: 84%;
   align-self: flex-end;
-  min-height: 140px;
+  min-height: 100px;
 }
 .college-photos .photo-slot:nth-child(3) {
   width: 70%;
   align-self: flex-start;
-  min-height: 130px;
+  min-height: 95px;
 }
 
 /* Hobbies: staggered trio — first wide, second offset right, third offset left */
@@ -571,16 +571,16 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.hobbies-photos .photo-slot { min-height: 150px; }
+.hobbies-photos .photo-slot { min-height: 110px; }
 .hobbies-photos .photo-slot:nth-child(2) {
   width: 80%;
   align-self: flex-end;
-  min-height: 140px;
+  min-height: 100px;
 }
 .hobbies-photos .photo-slot:nth-child(3) {
   width: 90%;
   align-self: flex-start;
-  min-height: 140px;
+  min-height: 100px;
 }
 
 /* Switch: large top, two side-by-side below */
@@ -641,13 +641,13 @@ body:has(a:hover) #cur-ring {
   display: flex; flex-direction: column; gap: 28px;
 }
 .exotics-slot-lg {
-  width: 100%; height: 220px;
+  width: 100%; height: 160px;
 }
 .exotics-slot-row {
   display: flex; gap: 16px;
 }
 .exotics-slot-sm {
-  flex: 1; height: 140px;
+  flex: 1; height: 110px;
 }
 
 /* ── Stat strip ── */
