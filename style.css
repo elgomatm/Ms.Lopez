@@ -398,7 +398,7 @@ body:has(a:hover) #cur-ring {
 ══════════════════════════════════════════════ */
 .photo-slot {
   width: 100%;
-  min-height: 160px;
+  min-height: 110px;
   border: 1.5px dashed rgba(255,255,255,0.25);
   border-radius: 16px;
   display: flex; flex-direction: column;
@@ -538,11 +538,11 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.bg-photos .photo-slot { min-height: 190px; }
+.bg-photos .photo-slot { min-height: 130px; }
 .bg-photos .photo-slot:nth-child(2) {
   width: 76%;
   align-self: flex-end;
-  min-height: 150px;
+  min-height: 110px;
 }
 
 /* College: staggered cascade */
@@ -552,16 +552,16 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.college-photos .photo-slot { min-height: 115px; }
+.college-photos .photo-slot { min-height: 75px; }
 .college-photos .photo-slot:nth-child(2) {
   width: 84%;
   align-self: flex-end;
-  min-height: 100px;
+  min-height: 70px;
 }
 .college-photos .photo-slot:nth-child(3) {
   width: 70%;
   align-self: flex-start;
-  min-height: 95px;
+  min-height: 65px;
 }
 
 /* Hobbies: staggered trio — first wide, second offset right, third offset left */
@@ -571,16 +571,16 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.hobbies-photos .photo-slot { min-height: 110px; }
+.hobbies-photos .photo-slot { min-height: 75px; }
 .hobbies-photos .photo-slot:nth-child(2) {
   width: 80%;
   align-self: flex-end;
-  min-height: 100px;
+  min-height: 70px;
 }
 .hobbies-photos .photo-slot:nth-child(3) {
   width: 90%;
   align-self: flex-start;
-  min-height: 100px;
+  min-height: 70px;
 }
 
 /* Switch: large top, two side-by-side below */
@@ -590,12 +590,12 @@ body:has(a:hover) #cur-ring {
   gap: 28px;
   width: 100%;
 }
-.switch-photos > .photo-slot { min-height: 200px; }
+.switch-photos > .photo-slot { min-height: 130px; }
 .pg-duo {
   display: flex;
   gap: 14px;
 }
-.pg-duo .photo-slot { flex: 1; min-height: 130px; }
+.pg-duo .photo-slot { flex: 1; min-height: 85px; }
 
 .sec-right {
   display: flex; flex-direction: column;
@@ -641,13 +641,13 @@ body:has(a:hover) #cur-ring {
   display: flex; flex-direction: column; gap: 28px;
 }
 .exotics-slot-lg {
-  width: 100%; height: 160px;
+  width: 100%; height: 110px;
 }
 .exotics-slot-row {
   display: flex; gap: 16px;
 }
 .exotics-slot-sm {
-  flex: 1; height: 110px;
+  flex: 1; height: 80px;
 }
 
 /* ── Stat strip ── */
@@ -905,9 +905,9 @@ body:has(a:hover) #cur-ring {
   .sec-layout.rev > .photo-group { order: 2; }
   .sec-layout.rev > .sec-left    { order: 1; }
   .sec-right { align-items: center; }
-  .photo-slot.lg { width: 100%; max-width: 300px; height: 220px; }
-  .photo-slot { width: 100%; max-width: 280px; height: 180px; }
-  .photo-slot.sm { width: 46%; height: 150px; }
+  .photo-slot.lg { width: 100%; max-width: 280px; height: 160px; }
+  .photo-slot { width: 100%; max-width: 260px; height: 130px; }
+  .photo-slot.sm { width: 46%; height: 110px; }
   /* filled slots: fit-content + max-width keeps them in bounds on mobile */
   .photo-slot.has-photo,
   .photo-slot.lg.has-photo,
@@ -917,7 +917,7 @@ body:has(a:hover) #cur-ring {
   #nav { padding: 16px 24px; }
   #footer { padding: 90px 32px; }
   .exotics-layout { grid-template-columns: 1fr; }
-  .exotics-slot-lg { height: 180px; }
+  .exotics-slot-lg { height: 110px; }
   .stat-strip { flex-direction: row; }
   .link-cards { grid-template-columns: 1fr; }
   .closing-inner { text-align: left; }
