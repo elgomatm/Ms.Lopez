@@ -236,10 +236,13 @@ if (VIEW_MODE) {
   /* ── Wire upload click handlers ── */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
-      const inp  = document.createElement('input');
-      inp.type   = 'file';
-      inp.accept = 'image/*';
-      inp.onchange = e => {
+      const inp    = document.createElement('input');
+      inp.type     = 'file';
+      inp.accept   = 'image/*';
+      inp.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+      document.body.appendChild(inp);          /* must be in DOM for iOS Safari */
+      inp.addEventListener('change', e => {
+        document.body.removeChild(inp);
         const file = e.target.files[0];
         if (!file) return;
         compressImage(file, dataUrl => {
@@ -247,10 +250,9 @@ if (VIEW_MODE) {
           const label = slot.dataset.label || slot.className;
           applyPhoto(slot, dataUrl);
           try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
-          /* Persist to server in background so any device sees the photo */
           autoPersistPhoto(label, dataUrl);
         });
-      };
+      });
       inp.click();
     });
   });
