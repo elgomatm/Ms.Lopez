@@ -8,6 +8,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Open Graph / link preview -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Malik Elgomati" />
+  <meta property="og:description" content="A personal page for Ms. Lopez — family, sports, The Exotics Network, and everything in between." />
+  <meta property="og:image"       content="/api/og" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="/api/og" />
 </head>
 <body>
   <div id="cur-dot"></div>
@@ -328,19 +336,6 @@
       <p class="footer-sig reveal-up" style="--d:0.14s">Ms. Lopez.</p>
     </div>
   </footer>
-
-  <!-- Bottom-right panel — appears after first photo uploaded -->
-  <div id="share-btn-wrap">
-    <button id="save-btn" onclick="saveAllPhotos()">
-      <span class="save-icon">↓</span>
-      <span class="save-text">Save Photos</span>
-    </button>
-    <button id="share-btn" onclick="generateSharePage()">
-      <span class="share-icon">↗</span>
-      <span class="share-text">Get Share Link</span>
-    </button>
-    <p class="share-hint">Click to generate a shareable link — no downloads, no tokens</p>
-  </div>
 
   <script src="script.js"></script>
 </body>

@@ -1,143 +1,6 @@
 'use strict';
 
 /* ══════════════════════════════════════════════
-   SHARE PAGE GENERATOR
-   Builds a self-contained HTML snapshot and
-   uploads it to Vercel Blob via /api/share —
-   returns a real, permanent shareable URL.
-══════════════════════════════════════════════ */
-function updateShareBtn() {
-  const wrap = document.getElementById('share-btn-wrap');
-  if (!wrap) return;
-  const hasPhotos = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i))
-    .some(k => k && k.startsWith('photo__'));
-  wrap.classList.toggle('visible', hasPhotos);
-}
-
-async function generateSharePage() {
-  const btn  = document.getElementById('share-btn');
-  const txt  = document.querySelector('.share-text');
-  const hint = document.querySelector('.share-hint');
-  if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Building…'; }
-
-  const hasPhotos = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i))
-    .some(k => k && k.startsWith('photo__'));
-  if (!hasPhotos) {
-    alert('Upload some photos first!');
-    if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    return;
-  }
-
-  /* ── 1. Snapshot DOM, strip animation classes, remove edit-only elements ── */
-  let rawHtml = document.body.innerHTML;
-  rawHtml = rawHtml.replace(/(\bclass="[^"]*)\bin\b\s*/g, '$1');
-  const shareDoc = new DOMParser().parseFromString(
-    `<!DOCTYPE html><html><body>${rawHtml}</body></html>`, 'text/html'
-  );
-  shareDoc.querySelectorAll('.photo-slot:not(.has-photo)').forEach(el => el.remove());
-  ['cur-dot', 'cur-ring', 'share-btn-wrap'].forEach(id => shareDoc.getElementById(id)?.remove());
-  shareDoc.querySelector('script[src="script.js"]')?.remove();
-
-  /* ── 2. Upload each photo to Vercel Blob one at a time (avoids 4.5 MB limit) ── */
-  const photoImgs = Array.from(shareDoc.querySelectorAll('.slot-photo[src^="data:"]'));
-  let i = 0;
-  for (const img of photoImgs) {
-    i++;
-    if (txt) txt.textContent = `Uploading photo ${i}/${photoImgs.length}…`;
-    try {
-      const res  = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dataUrl:  img.src,
-          filename: `photo-${Date.now()}-${i}.jpg`
-        })
-      });
-      const data = await res.json().catch(() => ({}));
-      if (data.setup) {
-        /* Blob not yet wired up */
-        if (hint) {
-          hint.innerHTML =
-            '<strong style="color:#fff">One-time setup (30 sec):</strong><br>' +
-            '1. <a href="https://vercel.com/dashboard" target="_blank" style="color:#fff">Vercel dashboard</a> → your project → <strong>Storage</strong> tab<br>' +
-            '2. Create Database → <strong>Blob</strong> → Connect to project<br>' +
-            '3. Click the button again ✓';
-        }
-        if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-        return;
-      }
-      if (res.ok && data.url) img.src = data.url; /* swap data URI → blob URL */
-    } catch (_) { /* keep original data URI as fallback */ }
-  }
-
-  /* ── 3. Inline CSS + JS so the page needs zero Vercel auth to open ── */
-  if (txt) txt.textContent = 'Finalising…';
-  const bodyHtml = shareDoc.body.innerHTML;
-
-  let cssText = '', jsText = '';
-  try {
-    const [cr, jr] = await Promise.all([fetch('./style.css'), fetch('./script.js')]);
-    cssText = await cr.text();
-    jsText  = await jr.text();
-  } catch (e) { console.warn('Could not inline assets', e); }
-
-  /* Photos are blob URLs, CSS+JS are ~80 KB inline — total well under 5 MB limit */
-  const fullHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malik Elgomati \u2014 For Ms. Lopez</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
-  ${cssText ? `<style>${cssText}<\/style>` : `<link rel="stylesheet" href="./style.css">`}
-  <script>window.VIEW_MODE = true;<\/script>
-</head>
-<body>${bodyHtml}
-  ${jsText ? `<script>${jsText}<\/script>` : `<script src="./script.js"><\/script>`}
-</body>
-</html>`;
-
-  /* ── 4. Upload the lightweight HTML ── */
-  if (txt) txt.textContent = 'Uploading page…';
-  let shareUrl;
-  try {
-    const res  = await fetch('/api/share', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ html: fullHtml })
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      alert('Error uploading page: ' + (data.error || res.status));
-      if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-      return;
-    }
-    shareUrl = data.url;
-  } catch (_) {
-    alert('Could not reach /api/share — are you on the live Vercel site?');
-    if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    return;
-  }
-
-  /* ── 5. Show the link ── */
-  try { await navigator.clipboard.writeText(shareUrl); } catch (_) {}
-
-  if (txt) txt.textContent = '✓ Link copied!';
-  if (hint) {
-    hint.innerHTML =
-      `<a href="${shareUrl}" target="_blank" style="color:inherit;font-weight:600;word-break:break-all">${shareUrl}</a>` +
-      `<br><span style="opacity:0.7;font-size:0.78rem">Copied — send it to Ms. Lopez ✓</span>`;
-  }
-
-  setTimeout(() => {
-    if (btn) { btn.disabled = false; if (txt) txt.textContent = 'Get Share Link'; }
-    if (hint) hint.textContent = 'Click to generate a fresh shareable link';
-  }, 12000);
-}
-
-/* ══════════════════════════════════════════════
    CURSOR
 ══════════════════════════════════════════════ */
 const dot  = document.getElementById('cur-dot');
@@ -353,7 +216,6 @@ if (VIEW_MODE) {
     const saved = localStorage.getItem(key);
     if (saved) applyPhoto(slot, saved);
   });
-  updateShareBtn();
 
   /* Fetch server manifest in background — fills any slots not in localStorage
      and ensures photos survive deployments / browser-data clears              */
@@ -369,7 +231,6 @@ if (VIEW_MODE) {
         /* Cache the blob URL locally (tiny — just a URL string) */
         try { localStorage.setItem('photo__' + label, url); } catch (_) {}
       });
-      updateShareBtn();
     })
     .catch(() => { /* silently ignore — localStorage already applied */ });
 
@@ -387,78 +248,11 @@ if (VIEW_MODE) {
           const label = slot.dataset.label || slot.className;
           applyPhoto(slot, dataUrl);
           try { localStorage.setItem('photo__' + label, dataUrl); } catch (_) {}
-          updateShareBtn();
         });
       };
       inp.click();
     });
   });
-}
-
-/* ── Save Photos: upload to Vercel Blob + persist manifest server-side ── */
-async function saveAllPhotos() {
-  const btn = document.getElementById('save-btn');
-  const txt = document.querySelector('.save-text');
-  if (btn) { btn.disabled = true; if (txt) txt.textContent = 'Saving…'; }
-
-  const slots = Array.from(document.querySelectorAll('.photo-slot.has-photo'));
-  if (!slots.length) {
-    if (btn) btn.disabled = false;
-    if (txt) { txt.textContent = 'Nothing to save'; setTimeout(() => { txt.textContent = 'Save Photos'; }, 2000); }
-    return;
-  }
-
-  const manifest = {};
-  let i = 0;
-  for (const slot of slots) {
-    const img   = slot.querySelector('.slot-photo');
-    const label = slot.dataset.label || slot.className;
-    if (!img || !img.src || img.src === window.location.href) continue;
-    i++;
-    if (txt) txt.textContent = `Saving ${i}/${slots.length}…`;
-
-    let url = img.src;
-
-    /* Upload data URIs to Vercel Blob so they get a permanent URL */
-    if (url.startsWith('data:')) {
-      try {
-        const res  = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ dataUrl: url, filename: `saved-${label}-${Date.now()}.jpg` })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (data.url) {
-          url    = data.url;
-          img.src = url;  /* swap data URI in DOM with permanent blob URL */
-        }
-      } catch (_) {}
-    }
-
-    manifest[label] = url;
-    /* Cache locally too — smaller now that it's a URL not a data URI */
-    try { localStorage.setItem('photo__' + label, url); } catch (_) {}
-  }
-
-  /* Persist the manifest server-side */
-  let serverOk = false;
-  try {
-    const res = await fetch('/api/save-photos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photos: manifest })
-    });
-    serverOk = res.ok;
-  } catch (_) {}
-
-  if (btn) btn.disabled = false;
-  if (txt) {
-    const n = Object.keys(manifest).length;
-    txt.textContent = serverOk
-      ? `✓ ${n} photo${n !== 1 ? 's' : ''} saved`
-      : `✓ ${n} saved locally`;
-    setTimeout(() => { if (txt) txt.textContent = 'Save Photos'; }, 3000);
-  }
 }
 
 /* ══════════════════════════════════════════════
