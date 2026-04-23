@@ -475,13 +475,13 @@ body:has(a:hover) #cur-ring {
     0 40px 80px rgba(0,0,0,0.14);
 }
 
-/* the image itself — scales down to fit, never crops, frame hugs it */
+/* the image itself — scales to fit naturally, no cropping, frame hugs it */
 .slot-photo {
   display: block;
-  width: auto;
-  max-width: 280px;   /* caps how wide any photo gets */
+  width: auto;          /* never stretch beyond natural width */
+  max-width: 100%;      /* stay inside the polaroid frame */
   height: auto;
-  max-height: 280px;  /* caps tall portrait shots — both constraints maintain aspect ratio */
+  max-height: 400px;    /* prevent portrait shots from towering over the page */
   border-radius: 1px;
 }
 
@@ -528,7 +528,7 @@ body:has(a:hover) #cur-ring {
 .bg-photos {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
   width: 100%;
 }
 .bg-photos .photo-slot { min-height: 260px; }
@@ -542,7 +542,7 @@ body:has(a:hover) #cur-ring {
 .college-photos {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
   width: 100%;
 }
 .college-photos .photo-slot { min-height: 220px; }
@@ -561,7 +561,7 @@ body:has(a:hover) #cur-ring {
 .hobbies-photos {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
   width: 100%;
 }
 .hobbies-photos .photo-slot { min-height: 200px; }
@@ -580,7 +580,7 @@ body:has(a:hover) #cur-ring {
 .switch-photos {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
   width: 100%;
 }
 .switch-photos > .photo-slot { min-height: 280px; }
@@ -631,7 +631,7 @@ body:has(a:hover) #cur-ring {
   margin: 0 auto;
 }
 .exotics-photos {
-  display: flex; flex-direction: column; gap: 16px;
+  display: flex; flex-direction: column; gap: 28px;
 }
 .exotics-slot-lg {
   width: 100%; height: 300px;
