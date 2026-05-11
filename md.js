@@ -52,6 +52,18 @@ async function idbLoadAll() {
    Used to build the saved manifest so no photo ever gets dropped. */
 const uploadedPhotos = {};
 
+/* Start fetching + preloading photos immediately so they are browser-cached
+   by the time the user finishes the language selection screen. */
+const _photosPrefetchPromise = fetch('/api/md-load-photos')
+  .then(r => r.ok ? r.json() : { photos: {} })
+  .then(({ photos }) => {
+    if (!photos) return {};
+    Object.assign(uploadedPhotos, photos);
+    Object.values(photos).forEach(url => { const i = new Image(); i.src = url; });
+    return photos;
+  })
+  .catch(() => ({}));
+
 /* ─── LOADER MESSAGES ─── */
 const LANG = {
   en: {
@@ -65,18 +77,62 @@ const LANG = {
     ],
   },
   ar: {
-    dir: "rtl",
-    messages: [
-      { p: "جاري تحميل لمسات طفلك الأوّل…",
-        s: "(Loading your firstborn’s touches…)" },
-      { p: "نُحضِّر كل الحب الذي تستحقينه…",
-        s: "(Preparing all the love you deserve…)" },
-      { p: "نملأ كل لحظة بدفئك وعطائك…",
-        s: "(Filling every moment with your warmth…)" },
-      { p: "كل شيء جاهز بكل محبّة، يا أمي…",
-        s: "(Everything ready with all our love, Mama…)" },
-      { p: "♡", s: "" },
-    ],
+    "hero.tag":           "رسالة",
+    "hero.title":         "غاليتي أمي.",
+    "hero.sub":           "إلى المرأة التي تركت كل ما تعرفه، لتعطينا كل ما تملك.",
+    "ui.tap":             "اضغط لإضافة",
+    "ui.scroll":          "اسحب",
+    "cap.mama-me":        "أنا وأمي",
+
+    "sac.tag":            "البداية",
+    "sac.title":          "من ليبيا، بكل شيء.",
+    "sac.body1":          "تركتِ بلداً كان يحمل كل ما أنتِ عليه — عائلتكِ، وأزقتكِ، ولغتكِ — ووصلتِ إلى مكانٍ لا يعرفكِ ولا يدين لكِ بشيء. بدأتِ من جديد. ليس لأن الأمر كان سهلاً، بل لأننا كنّا نحتاج إليكِ.",
+    "sac.body2":          "قلّة من الناس تدرك ثمن ذلك. ليس الانتقال، وليس اللغة — بل فعل البناء اليومي في أرضٍ لم تكن أرضكِ، لأجل أطفالٍ كانوا أصغر من أن يدركوا ما كنتِ تتخلّين عنه.",
+    "sac.body3":          "ما بنيتِه حقيقي. ولم يأتِ من شيء أعطاكِ إياه العالم.",
+    "sac.quote":          "\u201chي لم تُربِّ عائلة. هي بنت واحدة — من الإيمان، ومن الإرادة، ومن حبٍّ راسخٍ لم يحتج يوماً إلى أن يُعلن عن نفسه.\u201d",
+
+    "fruits.tag":         "إرثكِ",
+    "fruits.title":       "انظري ما بنيتِ.",
+    "fruits.intro":       "مهما كانت صحّتكِ تحمله، ومهما كان بُعدكِ عن أهلكِ يثقل عليكِ — كانت الوجبات جاهزة. والبيت دافئاً. وكل من دخل ذلك الباب خرج وفي نفسه أنه ينتمي إلى شيء. لم تتوقّفي يوماً عن كونكِ أمّنا.",
+    "fruits.anis-name":   "أنيس",
+    "fruits.anis-desc":   "أصغرهم — يدرس الهندسة في جامعة براون. ذلك الولد الذي كان يطرق بابي ليجد من يجلس معه أصبح اليوم يبني شيئاً خاصاً به على الساحل الشرقي.",
+    "cap.anis":           "أنيس",
+    "fruits.daniah-name": "دانية",
+    "fruits.daniah-desc": "الوسطى — مهندسة برمجيات، خريجة جامعة كولورادو دنفر، وعلى أعتاب الزواج. كانت القوة الهادئة التي أبقت أنيس وأنا على المسار الصحيح. أنتِ من زرعت ذلك فيها.",
+    "cap.daniah":         "دانية",
+    "fruits.malik-name":  "مالك",
+    "fruits.malik-desc":  "الأكبر — مهندس برمجيات يبني شيئاً في تكساس. لا يزال يلاحق ما طالما أخبرتِه بأنه يستحق الملاحقة: عمل يستطيع أن يسمّيه ملكه وحده.",
+    "cap.malik":          "مالك",
+    "fruits.body1":       "ثلاثة أبناء. ثلاث شهادات. ثلاثة مسارات شكّلتِها بيديكِ. حين تعثّرت الأمور — علاقات، وثقة، واتجاه — كنتِ أنتِ من نعود إليه. ليس لأنكِ تملكين الإجابات، بل لأنكِ كنتِ ثابتةً حين لم يكن شيء آخر ثابتاً. ولم تطلبي شيئاً في المقابل.",
+    "fruits.body2":       "لا يزال الناس يقولون لي: بيتكِ معروف. ليس بما فيه، بل بما يعطيه. أنتِ من صنعت ذلك.",
+
+    "apart.tag":          "هذه السنة",
+    "apart.title":        "رغم البُعد.",
+    "cap.with-love":      "بكل الحب",
+    "cap.always":         "دائماً",
+    "apart.body1":        "كنت أعرف دائماً أن بيننا خلافاتنا. ما لم أكن أعرفه — ما بدأت أدركه فقط بعد أن غادرت — هو كمّ ما كنتِ تحملينه كل يوم دون أن تجعليني أشعر بثقله.",
+    "apart.body2":        "هذا أول عيد أمّ نقضيه بعيدين. كنت أراكِ لا تُقهر. وما زلت — لكن بفهم مختلف الآن. الآن أدرك ما كلّفكِ ذلك. أنيس وأنا نفكّر فيكِ كل يوم.",
+    "apart.body3":        "أشعر بغيابكِ في الأشياء الصغيرة. في صمت الصباح حين لا يكون الطعام جاهزاً على الطاولة. في يومٍ صعب حين تكون من تعرفني أكثر من أي أحد على بُعد ثلاث ولايات. كنتِ في كل مكان من تلك الحياة التي اعتبرتُها مسلّماً بها.",
+    "apart.quote":        "\u201cفي كل فصل، يا أمي — نحبكِ. أسأل الله أن يبارك كل كفاحٍ، وكل دمعةٍ ذُرفت في خلوة، وكل تضحيةٍ قدَّمتِها دون أن تطلبي من أحد أن يراها.\u201d",
+
+    "chapter.tag":        "نظرة للأمام",
+    "chapter.title":      "مجرد فصل.",
+    "cap.until-then":     "حتى نلتقي",
+    "chapter.body1":      "إن شاء الله، يا أمي — هذا مجرد فصل. وليس الكتاب كله.",
+    "chapter.body2":      "سيتخرّج أنيس ويعود. وسأعود أنا — بعد أن أبني شيئاً أستطيع أن أقف خلفه. وسنكون في نفس المدينة مجدداً. حول نفس الطاولة.",
+    "chapter.body3":      "حتى ذلك الحين، تمسّكي. كنتِ دائماً أثبت شخص في الغرفة، حتى حين لم يكن أحد يراكِ. هذا لم يتغيّر. إنه فقط يُطلب منه أن يُثبت نفسه من جديد.",
+    "chapter.love":       "عيد أمّ سعيد، يا أمي.<br/>أحبكِ.",
+    "chapter.sig":        "— مالك",
+
+    "collage.tag":        "بكل محبتنا",
+    "collage.title":      "دائماً وإلى الأبد.",
+    "cap.a-moment":       "لحظة",
+    "cap.a-memory":       "ذكرى",
+    "cap.a-lifetime":     "عمر بأكمله",
+
+    "footer.title":       "عيد أمّ مبارك",
+    "footer.sub":         "صنعه أكبر أبنائكِ بكل ما عنده.",
+    "footer.arabic":      "كل عام وأنتِ بخير يا أمي ❤️",
   },
 };
 
@@ -311,62 +367,62 @@ function startTypewriter(el) {
 ════════════════════════════════════════════════ */
 const CONTENT = {
   en: {
-    "hero.tag":           "A Letter",
-    "hero.title":         "Dear Mama.",
-    "hero.sub":           "To the woman who built an entire world from nothing<br class=\"hide-mobile\"/> so her children could have everything.",
-    "ui.tap":             "Tap to add",
-    "ui.scroll":          "Scroll",
-    "cap.mama-me":        "Mama & Me",
+    “hero.tag”:           “A Letter”,
+    “hero.title”:         “Dear Mama.”,
+    “hero.sub”:           “To the woman who traded everything she knew<br class=\”hide-mobile\”/> for the chance to give us everything she had.”,
+    “ui.tap”:             “Tap to add”,
+    “ui.scroll”:          “Scroll”,
+    “cap.mama-me”:        “Mama & Me”,
 
-    "sac.tag":            "The Beginning",
-    "sac.title":          "From Libya, With Everything.",
-    "sac.body1":          "You left behind everything familiar — your family, your home, your language, the streets you grew up on — and stepped into a country that didn't know your name, didn't speak your tongue, and didn't owe you a single thing.",
-    "sac.body2":          "Most people never understand what that truly takes. To build a life from a blank page, in a place you didn't choose, with people you didn't know, in a language you were still learning — and to do it not for yourself, but for children who weren't even old enough to understand what sacrifice meant.",
-    "sac.body3":          "You built something beautiful, Mama. And you built it from nothing but love and faith.",
-    "sac.quote":          "“She didn’t just raise a family. She built a home — out of faith, out of grit, and out of a love so steady it never needed saying.”",
+    “sac.tag”:            “The Beginning”,
+    “sac.title”:          “From Libya, With Everything.”,
+    “sac.body1”:          “You left a country that held everything you were — your family, your streets, your language — and arrived somewhere that held nothing. No recognition. No debt owed to you. You began again. Not because it was easy. Because we needed you to.”,
+    “sac.body2”:          “Most people will never understand what that costs. Not the moving, not the language — but the daily act of building a life in soil that isn’t yours, for children who were too young to know what you were giving up.”,
+    “sac.body3”:          “What you built is real. And it came from nothing the world gave you.”,
+    “sac.quote”:          “”She didn’t raise a family. She built one — from faith, from will, and from a love so steady it never needed to announce itself.””,
 
-    "fruits.tag":         "Your Legacy",
-    "fruits.title":       "Look What You Built.",
-    "fruits.intro":       "Whether your health had its hiccups, or you quietly felt the weight of being far from your own family — the meals were always cooked. The clothes were always there. The house was always known in our community as the most generous, most welcoming place anyone had ever walked into. You never took a day off from being our mom.",
-    "fruits.anis-name":   "Anis",
-    "fruits.anis-desc":   "Your youngest — now studying Engineering at Brown University on the East Coast. The scrawny little kid who knocked on my door just to play is now stepping into something great.",
-    "cap.anis":           "Anis",
-    "fruits.daniah-name": "Daniah",
-    "fruits.daniah-desc": "Your middle — CU Denver Engineering grad, now working as a Software Engineer, and about to get married. The one who quietly kept Anis and I on track our entire lives.",
-    "cap.daniah":         "Daniah",
-    "fruits.malik-name":  "Malik",
-    "fruits.malik-desc":  "Your oldest — a Software Engineer pursuing entrepreneurship in Texas. Still chasing what you always told me was worth chasing: something I could call my own.",
-    "cap.malik":          "Malik",
-    "fruits.body1":       "Three kids. Three degrees. Three lives you shaped from the ground up with nothing but your own two hands. You were our shoulder when relationships fell apart. Our backbone when we wanted to give up. The voice of reason when everything felt impossible. And through all of it — you never asked for a single thing in return.",
-    "fruits.body2":       "Multiple people have told me directly — your home is known. Known for the food that’s always there, for the warmth that greets anyone who walks through the door, for the way you treat every guest like family. You built that reputation.",
+    “fruits.tag”:         “Your Legacy”,
+    “fruits.title”:       “Look What You Built.”,
+    “fruits.intro”:       “Whatever your health was carrying, however far you were from your own family — the meals were made. The house was warm. Anyone who walked through that door left feeling like they belonged. You never stopped being our mother, not for a single day.”,
+    “fruits.anis-name”:   “Anis”,
+    “fruits.anis-desc”:   “Your youngest — studying Engineering at Brown University. The kid who used to knock on my door just to have someone around is now building something of his own on the East Coast.”,
+    “cap.anis”:           “Anis”,
+    “fruits.daniah-name”: “Daniah”,
+    “fruits.daniah-desc”: “Your middle — CU Denver Engineering graduate, now a Software Engineer, and soon to be married. She was the quiet force that kept Anis and me from losing our way. You raised that in her.”,
+    “cap.daniah”:         “Daniah”,
+    “fruits.malik-name”:  “Malik”,
+    “fruits.malik-desc”:  “Your oldest — a Software Engineer building something in Texas. Still chasing the thing you always told him was worth chasing: work he could call entirely his own.”,
+    “cap.malik”:          “Malik”,
+    “fruits.body1”:       “Three kids. Three degrees. Three lives shaped entirely by what you gave. When things fell apart — relationships, confidence, direction — you were the one we came back to. Not because you had the answers, but because you were steady when nothing else was. You never asked for anything in return.”,
+    “fruits.body2”:       “People still tell me: your home is known. Not for what it has, but for what it gives. You made that.”,
 
-    "apart.tag":          "This Year",
-    "apart.title":        "Though Miles Apart.",
-    "cap.with-love":      "With Love",
-    "cap.always":         "Always",
-    "apart.body1":        "I know we have our differences. I always knew that. But what I didn’t know — what I only started to truly understand after moving out and being on my own — is just how much you were doing every single day without ever making it a thing.",
-    "apart.body2":        "This is the first Mother’s Day we spend apart. I always thought of you as superwoman — and I still do — but now I get it. Now I understand the real weight behind it all. And I want you to know: Anis and I are missing you. Every single day.",
-    "apart.body3":        "I notice your absence in everything. In the quiet of a morning with no food already made. In a hard day with no one to call who truly, fully knows me. In every little thing I never stopped to notice when you were right there.",
-    "apart.quote":        "“Through thick and thin, Mama — we all love you. May Allah bless every struggle, every tear shed, and every sacrifice you have ever made for us.”",
+    “apart.tag”:          “This Year”,
+    “apart.title”:        “Though Miles Apart.”,
+    “cap.with-love”:      “With Love”,
+    “cap.always”:         “Always”,
+    “apart.body1”:        “I always knew we had our differences. What I didn’t know — what I only began to understand after leaving — is how much you were carrying every single day without ever letting me feel the weight of it.”,
+    “apart.body2”:        “This is the first Mother’s Day we spend apart. I used to think of you as invincible. I still do — but differently now. Now I understand what that invincibility actually cost you. Anis and I think of you every day.”,
+    “apart.body3”:        “I feel your absence in the small things. In a quiet morning with no food already on the table. In a hard day when the person who knows me best is three states away. You were everywhere in the life I took for granted.”,
+    “apart.quote”:        “”In every season, Mama — we love you. May Allah bless every struggle, every quiet tear, and every sacrifice you made for us without ever asking to be seen.””,
 
-    "chapter.tag":        "Looking Forward",
-    "chapter.title":      "Just A Chapter.",
-    "cap.until-then":     "Until Then",
-    "chapter.body1":      "Inshallah, Mama — this is just a chapter. Not the whole book.",
-    "chapter.body2":      "Anis will graduate and come back. I will move back after this company takes off — after I can stand in front of you and say I built something I’m proud of. And we will all be reunited. In the same city. Around the same table.",
-    "chapter.body3":      "Until then, stay strong for us. You’ve always been so unbelievably strong — and now it really gets tested. But I am so confident you will make it through, because everything you have ever done has been for the sake of us. And that is a strength no distance can ever touch.",
-    "chapter.love":       "Happy Mother’s Day, Mama.<br/>I love you.",
-    "chapter.sig":        "— Malik",
+    “chapter.tag”:        “Looking Forward”,
+    “chapter.title”:      “Just A Chapter.”,
+    “cap.until-then”:     “Until Then”,
+    “chapter.body1”:      “Inshallah, Mama — this is just a chapter. Not the whole book.”,
+    “chapter.body2”:      “Anis will finish and come home. I will come back — after I’ve built something I can stand behind. And we’ll be in the same city again. Around the same table.”,
+    “chapter.body3”:      “Until then, hold on. You have always been the steadiest person in the room, even when no one was watching. That hasn’t changed. It’s just being asked to prove itself again.”,
+    “chapter.love”:       “Happy Mother’s Day, Mama.<br/>I love you.”,
+    “chapter.sig”:        “— Malik”,
 
-    "collage.tag":        "With All Our Love",
-    "collage.title":      "Always & Forever.",
-    "cap.a-moment":       "A Moment",
-    "cap.a-memory":       "A Memory",
-    "cap.a-lifetime":     "A Lifetime",
+    “collage.tag”:        “With All Our Love”,
+    “collage.title”:      “Always & Forever.”,
+    “cap.a-moment”:       “A Moment”,
+    “cap.a-memory”:       “A Memory”,
+    “cap.a-lifetime”:     “A Lifetime”,
 
-    "footer.title":       "Happy Mother’s Day",
-    "footer.sub":         "Made with every bit of love your oldest child could fit onto a screen.",
-    "footer.arabic":      "كل عام وأنتِ بخير يا أمي ❤️",
+    “footer.title”:       “Happy Mother’s Day”,
+    “footer.sub”:         “Built by your oldest, with everything he had.”,
+    “footer.arabic”:      “كل عام وأنتِ بخير يا أمي ❤️”,
   },
 
   ar: {
@@ -617,20 +673,16 @@ function initPhotoSlots() {
     autoSyncToBlob(cached); /* silent background sync — no re-upload needed */
   });
 
-  /* 2. Load manifest from Vercel Blob — populate uploadedPhotos map */
-  fetch('/api/md-load-photos')
-    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(({ photos }) => {
-      if (!photos) return;
-      Object.assign(uploadedPhotos, photos); /* seed the in-memory map */
-      document.querySelectorAll('.photo-slot').forEach(slot => {
-        const url = photos[slot.dataset.label];
-        if (!url) return;
-        applyPhoto(slot, url);
-        idbSave(slot.dataset.label, url);
-      });
-    })
-    .catch(err => console.error('[md] load-photos failed:', err.message));
+  /* 2. Reuse the already-in-flight prefetch (started on page load) */
+  _photosPrefetchPromise.then(photos => {
+    if (!photos) return;
+    document.querySelectorAll('.photo-slot').forEach(slot => {
+      const url = photos[slot.dataset.label];
+      if (!url) return;
+      applyPhoto(slot, url);
+      idbSave(slot.dataset.label, url);
+    });
+  }).catch(err => console.error('[md] load-photos failed:', err.message));
 
   /* 3. Wire click → file input */
   document.querySelectorAll('.photo-slot').forEach(slot => {
