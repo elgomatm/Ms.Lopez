@@ -9,8 +9,8 @@
 let selectedLang = "en";
 
 /* ─── INDEXED DB PHOTO CACHE ────────────────────────────────────────────
-   Persists compressed images immediately on selection so photos survive
-   reload regardless of whether the Vercel Blob upload succeeds.
+   Same-device fallback: saves compressed image immediately so photos
+   survive reload even before the Blob upload completes.
 ──────────────────────────────────────────────────────────────────────── */
 const IDB_NAME = 'md-photos', IDB_STORE = 'slots';
 
@@ -522,33 +522,33 @@ function compressToDataUrl(file) {
   });
 }
 
-/* Upload to Vercel Blob, then swap objectUrl → permanent URL */
+/* Upload to Vercel Blob via serverless function, then update manifest */
 async function uploadAndPersist(file, label, objectUrl) {
   try {
     const dataUrl = await compressToDataUrl(file);
 
-    /* ── Step 1: save compressed image to IndexedDB RIGHT NOW ──
-       This guarantees the photo survives a page reload even if
-       the Blob upload below fails or the token isn't configured. */
+    /* Step 1 — save to IndexedDB immediately (same-device reload guaranteed) */
     await idbSave(label, dataUrl);
 
-    /* ── Step 2: upload to Vercel Blob (best-effort) ── */
-    const res  = await fetch('/api/md-upload', {
+    /* Step 2 — upload via serverless function to Vercel Blob */
+    const fname = `md-photo-${label.replace(/\s+/g, '-')}-${Date.now()}.jpg`;
+    const res   = await fetch('/api/md-upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dataUrl, filename: `md-photo-${label}-${Date.now()}.jpg` }),
+      body: JSON.stringify({ dataUrl, filename: fname }),
     });
-    const data = await res.json().catch(() => ({}));
-    if (!data.url) return; /* IndexedDB already has it — we're fine */
+    if (!res.ok) throw new Error(`upload ${res.status}`);
+    const data = await res.json();
+    if (!data.url) throw new Error('no url returned');
 
-    /* ── Step 3: upgrade — swap objectUrl & IndexedDB entry → permanent URL ── */
+    /* Step 3 — swap display + IDB to permanent CDN URL */
     URL.revokeObjectURL(objectUrl);
     const slot = document.querySelector(`.photo-slot[data-label="${CSS.escape(label)}"]`);
     const img  = slot?.querySelector('.slot-photo');
     if (img) img.src = data.url;
-    await idbSave(label, data.url); /* replace large dataUrl with tiny CDN URL */
+    await idbSave(label, data.url);
 
-    /* ── Step 4: rebuild server manifest ── */
+    /* Step 4 — rebuild and save cross-device manifest */
     const manifest = {};
     document.querySelectorAll('.photo-slot.has-photo').forEach(s => {
       const lbl = s.dataset.label;
@@ -556,12 +556,16 @@ async function uploadAndPersist(file, label, objectUrl) {
       if (lbl && im?.src && !im.src.startsWith('blob:') && !im.src.startsWith('data:'))
         manifest[lbl] = im.src;
     });
-    await fetch('/api/md-save-photos', {
+    const saveRes = await fetch('/api/md-save-photos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ photos: manifest }),
     });
-  } catch (_) { /* photo still shows via objectUrl for this session */ }
+    if (!saveRes.ok) throw new Error(`save-manifest ${saveRes.status}`);
+  } catch (err) {
+    console.error('[md] uploadAndPersist failed:', err.message);
+    /* photo still visible this session via objectUrl; IndexedDB has dataUrl for reload */
+  }
 }
 
 function initPhotoSlots() {
@@ -573,20 +577,19 @@ function initPhotoSlots() {
     });
   });
 
-  /* 2. Sync server manifest in background (cross-device / permanent URLs) */
+  /* 2. Load manifest from Vercel Blob (cross-device) */
   fetch('/api/md-load-photos')
-    .then(r => r.ok ? r.json() : { photos: {} })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(({ photos }) => {
       if (!photos) return;
       document.querySelectorAll('.photo-slot').forEach(slot => {
-        const label = slot.dataset.label;
-        const url   = photos[label];
+        const url = photos[slot.dataset.label];
         if (!url) return;
         applyPhoto(slot, url);
-        idbSave(label, url); /* upgrade any cached dataUrl to permanent CDN URL */
+        idbSave(slot.dataset.label, url);
       });
     })
-    .catch(() => {});
+    .catch(err => console.error('[md] load-photos failed:', err.message));
 
   /* 3. Wire click → file input */
   document.querySelectorAll('.photo-slot').forEach(slot => {

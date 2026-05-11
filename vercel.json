@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/md-upload.js":     { "runtime": "nodejs18.x", "maxDuration": 30 },
+    "api/md-save-photos.js":{ "runtime": "nodejs18.x", "maxDuration": 10 },
+    "api/md-load-photos.js":{ "runtime": "nodejs18.x", "maxDuration": 10 }
+  }
+}
