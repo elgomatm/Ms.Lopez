@@ -47,6 +47,11 @@ async function idbLoadAll() {
   } catch (_) { return {}; }
 }
 
+/* In-memory map of every permanently-uploaded photo URL.
+   Populated on load from server manifest + updated after each upload.
+   Used to build the saved manifest so no photo ever gets dropped. */
+const uploadedPhotos = {};
+
 /* ─── LOADER MESSAGES ─── */
 const LANG = {
   en: {
@@ -548,18 +553,12 @@ async function uploadAndPersist(file, label, objectUrl) {
     if (img) img.src = data.url;
     await idbSave(label, data.url);
 
-    /* Step 4 — rebuild and save cross-device manifest */
-    const manifest = {};
-    document.querySelectorAll('.photo-slot.has-photo').forEach(s => {
-      const lbl = s.dataset.label;
-      const im  = s.querySelector('.slot-photo');
-      if (lbl && im?.src && !im.src.startsWith('blob:') && !im.src.startsWith('data:'))
-        manifest[lbl] = im.src;
-    });
+    /* Step 4 — add to in-memory map and save complete manifest */
+    uploadedPhotos[label] = data.url;
     const saveRes = await fetch('/api/md-save-photos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photos: manifest }),
+      body: JSON.stringify({ photos: uploadedPhotos }),
     });
     if (!saveRes.ok) throw new Error(`save-manifest ${saveRes.status}`);
   } catch (err) {
@@ -574,18 +573,15 @@ async function autoSyncToBlob(cached) {
   const needSync = Object.entries(cached).filter(([, src]) => src.startsWith('data:'));
   if (!needSync.length) return;
 
-  const manifest = {};
-
-  /* Carry forward any already-permanent URLs (from a previous successful upload) */
+  /* Seed from already-permanent IDB entries */
   for (const [label, src] of Object.entries(cached)) {
-    if (!src.startsWith('data:') && !src.startsWith('blob:')) manifest[label] = src;
+    if (!src.startsWith('data:') && !src.startsWith('blob:')) uploadedPhotos[label] = src;
   }
 
-  /* Upload each dataUrl photo to Blob */
   await Promise.all(needSync.map(async ([label, dataUrl]) => {
     try {
-      const fname  = `md-photo-${label.replace(/\s+/g, '-')}-${Date.now()}.jpg`;
-      const res    = await fetch('/api/md-upload', {
+      const fname = `md-photo-${label.replace(/\s+/g, '-')}-${Date.now()}.jpg`;
+      const res   = await fetch('/api/md-upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dataUrl, filename: fname }),
@@ -594,21 +590,19 @@ async function autoSyncToBlob(cached) {
       const data = await res.json();
       if (!data.url) return;
 
-      /* Swap display + IDB to permanent URL */
       const slot = document.querySelector(`.photo-slot[data-label="${CSS.escape(label)}"]`);
       const img  = slot?.querySelector('.slot-photo');
       if (img) img.src = data.url;
       await idbSave(label, data.url);
-      manifest[label] = data.url;
+      uploadedPhotos[label] = data.url;
     } catch (_) {}
   }));
 
-  /* Save manifest so every other device can now load the photos */
-  if (Object.keys(manifest).length) {
+  if (Object.keys(uploadedPhotos).length) {
     await fetch('/api/md-save-photos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ photos: manifest }),
+      body: JSON.stringify({ photos: uploadedPhotos }),
     }).catch(() => {});
   }
 }
@@ -623,11 +617,12 @@ function initPhotoSlots() {
     autoSyncToBlob(cached); /* silent background sync — no re-upload needed */
   });
 
-  /* 2. Load manifest from Vercel Blob (cross-device) */
+  /* 2. Load manifest from Vercel Blob — populate uploadedPhotos map */
   fetch('/api/md-load-photos')
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(({ photos }) => {
       if (!photos) return;
+      Object.assign(uploadedPhotos, photos); /* seed the in-memory map */
       document.querySelectorAll('.photo-slot').forEach(slot => {
         const url = photos[slot.dataset.label];
         if (!url) return;
