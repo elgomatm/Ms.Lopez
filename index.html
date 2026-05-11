@@ -13,12 +13,9 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════
-     LOADING SCREEN
-═══════════════════════════════════════ -->
+<!-- ═══════════ LOADING SCREEN ═══════════ -->
 <div id="loader">
 
-  <!-- Phase 1: Language Pick -->
   <div id="loader-lang" class="loader-phase">
     <div class="loader-heart-svg" aria-hidden="true">
       <svg viewBox="0 0 100 88" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,18 +28,17 @@
     <p class="loader-arabic-echo">عيد أم مبارك</p>
     <p class="loader-choose-prompt">Choose your language to begin</p>
     <div class="loader-lang-btns">
-      <button class="lang-btn" id="btn-en" aria-label="Continue in English">
+      <button class="lang-btn" id="btn-en">
         <span class="lang-btn-name">English</span>
         <span class="lang-btn-sub">In English</span>
       </button>
-      <button class="lang-btn" id="btn-ar" aria-label="Continue in Arabic">
+      <button class="lang-btn" id="btn-ar">
         <span class="lang-btn-name">العربية</span>
         <span class="lang-btn-sub">بالعربي</span>
       </button>
     </div>
   </div>
 
-  <!-- Phase 2: Loading Animation -->
   <div id="loader-anim" class="loader-phase" style="display:none; opacity:0;">
     <div class="loader-pulse-heart" aria-hidden="true">♡</div>
     <div class="loader-msg-area">
@@ -55,106 +51,81 @@
     <p class="loader-sig">— Malik</p>
   </div>
 
-</div><!-- #loader -->
+</div>
 
 
-<!-- ═══════════════════════════════════════
-     MAIN SITE
-═══════════════════════════════════════ -->
+<!-- ═══════════ MAIN SITE ═══════════ -->
 <div id="site" style="display:none; opacity:0;">
 
-  <!-- Floating ambient particles -->
   <div id="particles" aria-hidden="true"></div>
 
-  <!-- ══════════ 1. DEAR MAMA — HERO ══════════ -->
+  <!-- ══ 1. DEAR MAMA ══ -->
   <section id="dear-mama" class="sec hero-sec">
     <div class="orb orb-rose-lg"></div>
     <div class="orb orb-lavender-lg"></div>
     <div class="hero-inner">
 
       <div class="hero-text">
-        <span class="sec-tag reveal-up" style="--d:0.10s">A Letter</span>
-        <h1 class="hero-title reveal-write" data-font="cursive" style="--d:0.30s">Dear Mama.</h1>
-        <p class="hero-sub reveal-up" style="--d:0.65s">
-          To the woman who built an entire world from nothing<br class="hide-mobile"/> so her children could have everything.
-        </p>
+        <span class="sec-tag reveal-up" data-i18n="hero.tag" style="--d:0.10s">A Letter</span>
+        <h1 class="hero-title reveal-write" data-i18n="hero.title" style="--d:0.30s">Dear Mama.</h1>
+        <p class="hero-sub reveal-up" data-i18n-html="hero.sub" style="--d:0.65s">To the woman who built an entire world from nothing<br class="hide-mobile"/> so her children could have everything.</p>
       </div>
 
       <div class="hero-photo reveal-scale" style="--d:0.45s">
         <div class="photo-slot polaroid" data-label="Dear Mama" style="--rot:-2.2deg">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">Mama &amp; Me</span>
+          <span class="frame-caption" data-i18n="cap.mama-me">Mama &amp; Me</span>
         </div>
       </div>
 
     </div>
     <div class="scroll-cue reveal-up" style="--d:1.0s">
       <div class="scroll-line"></div>
-      <span>Scroll</span>
+      <span data-i18n="ui.scroll">Scroll</span>
     </div>
   </section>
 
 
-  <!-- ══════════ 2. THE SACRIFICE ══════════ -->
+  <!-- ══ 2. THE SACRIFICE ══ -->
   <section id="sacrifice" class="sec alt-bg">
     <div class="orb orb-peach-md"></div>
     <div class="sec-inner">
-      <span class="sec-tag reveal-up">The Beginning</span>
-      <h2 class="sec-heading reveal-write" style="--d:0.08s">From Libya, With Everything.</h2>
-
+      <span class="sec-tag reveal-up" data-i18n="sac.tag">The Beginning</span>
+      <h2 class="sec-heading reveal-write" data-i18n="sac.title" style="--d:0.08s">From Libya, With Everything.</h2>
       <div class="glass-card reveal-scale" style="--d:0.18s">
-        <p class="body-text reveal-up" style="--d:0.24s">
-          You left behind everything familiar — your family, your home, your language, the streets you grew up on —
-          and stepped into a country that didn't know your name, didn't speak your tongue,
-          and didn't owe you a single thing.
-        </p>
-        <p class="body-text reveal-up" style="--d:0.34s">
-          Most people never understand what that truly takes. To build a life from a blank page,
-          in a place you didn't choose, with people you didn't know, in a language you were still learning —
-          and to do it not for yourself, but for children who weren't even old enough to understand what sacrifice meant.
-        </p>
-        <p class="body-text reveal-up" style="--d:0.44s">
-          You built something beautiful, Mama. And you built it from nothing but love and faith.
-        </p>
-        <blockquote class="pull-quote reveal-up" style="--d:0.54s">
-          "She didn't just raise a family. She built a home — out of faith, out of grit,
-          and out of a love so steady it never needed saying."
-        </blockquote>
+        <p class="body-text reveal-up" data-i18n="sac.body1" style="--d:0.24s">You left behind everything familiar — your family, your home, your language, the streets you grew up on — and stepped into a country that didn't know your name, didn't speak your tongue, and didn't owe you a single thing.</p>
+        <p class="body-text reveal-up" data-i18n="sac.body2" style="--d:0.34s">Most people never understand what that truly takes. To build a life from a blank page, in a place you didn't choose, with people you didn't know, in a language you were still learning — and to do it not for yourself, but for children who weren't even old enough to understand what sacrifice meant.</p>
+        <p class="body-text reveal-up" data-i18n="sac.body3" style="--d:0.44s">You built something beautiful, Mama. And you built it from nothing but love and faith.</p>
+        <blockquote class="pull-quote reveal-up" data-i18n="sac.quote" style="--d:0.54s">"She didn't just raise a family. She built a home — out of faith, out of grit, and out of a love so steady it never needed saying."</blockquote>
       </div>
     </div>
   </section>
 
 
-  <!-- ══════════ 3. LOOK WHAT YOU BUILT ══════════ -->
+  <!-- ══ 3. LOOK WHAT YOU BUILT ══ -->
   <section id="fruits" class="sec">
     <div class="orb orb-sage-md"></div>
     <div class="sec-inner">
-      <span class="sec-tag reveal-up">Your Legacy</span>
-      <h2 class="sec-heading reveal-write" style="--d:0.08s">Look What You Built.</h2>
+      <span class="sec-tag reveal-up" data-i18n="fruits.tag">Your Legacy</span>
+      <h2 class="sec-heading reveal-write" data-i18n="fruits.title" style="--d:0.08s">Look What You Built.</h2>
+      <p class="sec-intro reveal-up" data-i18n="fruits.intro" style="--d:0.16s">Whether your health had its hiccups, or you quietly felt the weight of being far from your own family — the meals were always cooked. The clothes were always there. The house was always known in our community as the most generous, most welcoming place anyone had ever walked into. You never took a day off from being our mom.</p>
 
-      <p class="sec-intro reveal-up" style="--d:0.16s">
-        Whether your health had its hiccups, or you quietly felt the weight of being far from your own family —
-        the meals were always cooked. The clothes were always there. The house was always known in our community
-        as the most generous, most welcoming place anyone had ever walked into. You never took a day off from being our mom.
-      </p>
-
-      <!-- Three kids -->
       <div class="three-col">
 
         <div class="photo-card reveal-scale" style="--d:0.10s">
           <div class="photo-slot polaroid" data-label="Anis" style="--rot:1.8deg">
             <div class="frame-img-wrap">
               <span class="slot-icon">+</span>
-              <span class="slot-hint">Tap to add</span>
+              <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
             </div>
-            <span class="frame-caption">Anis</span>
+            <span class="frame-caption" data-i18n="cap.anis">Anis</span>
           </div>
           <div class="photo-card-body glass-card-sm reveal-up" style="--d:0.20s">
-            <h3 class="card-name">Anis</h3>
-            <p class="card-desc">Your youngest — now studying Engineering at Brown University on the East Coast. The scrawny little kid who knocked on my door just to play is now stepping into something great.</p>
+            <h3 class="card-name" data-i18n="fruits.anis-name">Anis</h3>
+            <p class="card-desc" data-i18n="fruits.anis-desc">Your youngest — now studying Engineering at Brown University on the East Coast. The scrawny little kid who knocked on my door just to play is now stepping into something great.</p>
           </div>
         </div>
 
@@ -162,13 +133,13 @@
           <div class="photo-slot polaroid" data-label="Daniah" style="--rot:-1.4deg">
             <div class="frame-img-wrap">
               <span class="slot-icon">+</span>
-              <span class="slot-hint">Tap to add</span>
+              <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
             </div>
-            <span class="frame-caption">Daniah</span>
+            <span class="frame-caption" data-i18n="cap.daniah">Daniah</span>
           </div>
           <div class="photo-card-body glass-card-sm reveal-up" style="--d:0.32s">
-            <h3 class="card-name">Daniah</h3>
-            <p class="card-desc">Your middle — CU Denver Engineering grad, now working as a Software Engineer, and about to get married. The one who quietly kept Anis and I on track our entire lives.</p>
+            <h3 class="card-name" data-i18n="fruits.daniah-name">Daniah</h3>
+            <p class="card-desc" data-i18n="fruits.daniah-desc">Your middle — CU Denver Engineering grad, now working as a Software Engineer, and about to get married. The one who quietly kept Anis and I on track our entire lives.</p>
           </div>
         </div>
 
@@ -176,118 +147,82 @@
           <div class="photo-slot polaroid" data-label="Malik" style="--rot:2.4deg">
             <div class="frame-img-wrap">
               <span class="slot-icon">+</span>
-              <span class="slot-hint">Tap to add</span>
+              <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
             </div>
-            <span class="frame-caption">Malik</span>
+            <span class="frame-caption" data-i18n="cap.malik">Malik</span>
           </div>
           <div class="photo-card-body glass-card-sm reveal-up" style="--d:0.44s">
-            <h3 class="card-name">Malik</h3>
-            <p class="card-desc">Your oldest — a Software Engineer pursuing entrepreneurship in Texas. Still chasing what you always told me was worth chasing: something I could call my own.</p>
+            <h3 class="card-name" data-i18n="fruits.malik-name">Malik</h3>
+            <p class="card-desc" data-i18n="fruits.malik-desc">Your oldest — a Software Engineer pursuing entrepreneurship in Texas. Still chasing what you always told me was worth chasing: something I could call my own.</p>
           </div>
         </div>
 
-      </div><!-- .three-col -->
+      </div>
 
       <div class="glass-card reveal-scale" style="--d:0.50s">
-        <p class="body-text reveal-up" style="--d:0.55s">
-          Three kids. Three degrees. Three lives you shaped from the ground up with nothing but your own two hands.
-          You were our shoulder when relationships fell apart. Our backbone when we wanted to give up.
-          The voice of reason when everything felt impossible. And through all of it — you never asked for a single thing in return.
-        </p>
-        <p class="body-text reveal-up" style="--d:0.65s">
-          Multiple people have told me directly — your home is <em>known</em>. Known for the food
-          that's always there, for the warmth that greets anyone who walks through the door, for
-          the way you treat every guest like family. <em>You</em> built that reputation.
-        </p>
+        <p class="body-text reveal-up" data-i18n="fruits.body1" style="--d:0.55s">Three kids. Three degrees. Three lives you shaped from the ground up with nothing but your own two hands. You were our shoulder when relationships fell apart. Our backbone when we wanted to give up. The voice of reason when everything felt impossible. And through all of it — you never asked for a single thing in return.</p>
+        <p class="body-text reveal-up" data-i18n="fruits.body2" style="--d:0.65s">Multiple people have told me directly — your home is known. Known for the food that's always there, for the warmth that greets anyone who walks through the door, for the way you treat every guest like family. You built that reputation.</p>
       </div>
     </div>
   </section>
 
 
-  <!-- ══════════ 4. THOUGH MILES APART ══════════ -->
+  <!-- ══ 4. THOUGH MILES APART ══ -->
   <section id="apart" class="sec alt-bg">
     <div class="orb orb-lavender-sm"></div>
     <div class="sec-inner">
-      <span class="sec-tag reveal-up">This Year</span>
-      <h2 class="sec-heading reveal-write" style="--d:0.08s">Though Miles Apart.</h2>
+      <span class="sec-tag reveal-up" data-i18n="apart.tag">This Year</span>
+      <h2 class="sec-heading reveal-write" data-i18n="apart.title" style="--d:0.08s">Though Miles Apart.</h2>
 
       <div class="two-col-photos">
         <div class="photo-slot polaroid reveal-scale" data-label="Apart 1" style="--rot:-3.0deg; --d:0.12s">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">With Love</span>
+          <span class="frame-caption" data-i18n="cap.with-love">With Love</span>
         </div>
         <div class="photo-slot polaroid reveal-scale" data-label="Apart 2" style="--rot:2.2deg; --d:0.26s">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">Always</span>
+          <span class="frame-caption" data-i18n="cap.always">Always</span>
         </div>
       </div>
 
       <div class="glass-card reveal-scale" style="--d:0.32s">
-        <p class="body-text reveal-up" style="--d:0.38s">
-          I know we have our differences. I always knew that. But what I didn't know —
-          what I only started to truly understand after moving out and being on my own —
-          is just how much you were doing every single day without ever making it a thing.
-        </p>
-        <p class="body-text reveal-up" style="--d:0.48s">
-          This is the first Mother's Day we spend apart. I always thought of you as superwoman —
-          and I still do — but now I get it. Now I understand the real weight behind it all.
-          And I want you to know: Anis and I are missing you. Every single day.
-        </p>
-        <p class="body-text reveal-up" style="--d:0.58s">
-          I notice your absence in everything. In the quiet of a morning with no food already made.
-          In a hard day with no one to call who truly, fully knows me.
-          In every little thing I never stopped to notice when you were right there.
-        </p>
-        <blockquote class="pull-quote reveal-up" style="--d:0.68s">
-          "Through thick and thin, Mama — we all love you. May Allah bless every struggle,
-          every tear shed, and every sacrifice you have ever made for us."
-        </blockquote>
+        <p class="body-text reveal-up" data-i18n="apart.body1" style="--d:0.38s">I know we have our differences. I always knew that. But what I didn't know — what I only started to truly understand after moving out and being on my own — is just how much you were doing every single day without ever making it a thing.</p>
+        <p class="body-text reveal-up" data-i18n="apart.body2" style="--d:0.48s">This is the first Mother's Day we spend apart. I always thought of you as superwoman — and I still do — but now I get it. Now I understand the real weight behind it all. And I want you to know: Anis and I are missing you. Every single day.</p>
+        <p class="body-text reveal-up" data-i18n="apart.body3" style="--d:0.58s">I notice your absence in everything. In the quiet of a morning with no food already made. In a hard day with no one to call who truly, fully knows me. In every little thing I never stopped to notice when you were right there.</p>
+        <blockquote class="pull-quote reveal-up" data-i18n="apart.quote" style="--d:0.68s">"Through thick and thin, Mama — we all love you. May Allah bless every struggle, every tear shed, and every sacrifice you have ever made for us."</blockquote>
       </div>
     </div>
   </section>
 
 
-  <!-- ══════════ 5. JUST A CHAPTER ══════════ -->
+  <!-- ══ 5. JUST A CHAPTER ══ -->
   <section id="chapter" class="sec">
     <div class="orb orb-rose-sm"></div>
     <div class="sec-inner">
-      <span class="sec-tag reveal-up">Looking Forward</span>
-      <h2 class="sec-heading reveal-write" style="--d:0.08s">Just A Chapter.</h2>
+      <span class="sec-tag reveal-up" data-i18n="chapter.tag">Looking Forward</span>
+      <h2 class="sec-heading reveal-write" data-i18n="chapter.title" style="--d:0.08s">Just A Chapter.</h2>
 
       <div class="chapter-layout">
         <div class="photo-slot polaroid reveal-scale chapter-photo" data-label="Chapter" style="--rot:-2.6deg; --d:0.15s">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">Until Then</span>
+          <span class="frame-caption" data-i18n="cap.until-then">Until Then</span>
         </div>
         <div class="chapter-text">
           <div class="glass-card reveal-scale" style="--d:0.20s">
-            <p class="body-text reveal-up" style="--d:0.26s">
-              Inshallah, Mama — this is just a chapter. Not the whole book.
-            </p>
-            <p class="body-text reveal-up" style="--d:0.36s">
-              Anis will graduate and come back. I will move back after this company takes off —
-              after I can stand in front of you and say I built something I'm proud of.
-              And we will all be reunited. In the same city. Around the same table.
-            </p>
-            <p class="body-text reveal-up" style="--d:0.46s">
-              Until then, stay strong for us. You've always been so unbelievably strong —
-              and now it really gets tested. But I am so confident you will make it through,
-              because everything you have ever done has been for the sake of us.
-              And that is a strength no distance can ever touch.
-            </p>
-            <p class="closing-love reveal-up" style="--d:0.58s">
-              Happy Mother's Day, Mama.<br/>I love you.
-            </p>
-            <p class="closing-sig reveal-up" style="--d:0.68s">— Malik</p>
+            <p class="body-text reveal-up" data-i18n="chapter.body1" style="--d:0.26s">Inshallah, Mama — this is just a chapter. Not the whole book.</p>
+            <p class="body-text reveal-up" data-i18n="chapter.body2" style="--d:0.36s">Anis will graduate and come back. I will move back after this company takes off — after I can stand in front of you and say I built something I'm proud of. And we will all be reunited. In the same city. Around the same table.</p>
+            <p class="body-text reveal-up" data-i18n="chapter.body3" style="--d:0.46s">Until then, stay strong for us. You've always been so unbelievably strong — and now it really gets tested. But I am so confident you will make it through, because everything you have ever done has been for the sake of us. And that is a strength no distance can ever touch.</p>
+            <p class="closing-love reveal-up" data-i18n-html="chapter.love" style="--d:0.58s">Happy Mother's Day, Mama.<br/>I love you.</p>
+            <p class="closing-sig reveal-up" data-i18n="chapter.sig" style="--d:0.68s">— Malik</p>
           </div>
         </div>
       </div>
@@ -295,47 +230,45 @@
   </section>
 
 
-  <!-- ══════════ 6. PHOTO COLLAGE ══════════ -->
+  <!-- ══ 6. COLLAGE ══ -->
   <section id="collage" class="sec alt-bg collage-sec">
     <div class="sec-inner">
-      <span class="sec-tag reveal-up" style="text-align:center;">With All Our Love</span>
-      <h2 class="sec-heading reveal-write" style="--d:0.08s; text-align:center;">Always &amp; Forever.</h2>
+      <span class="sec-tag reveal-up" data-i18n="collage.tag" style="text-align:center;">With All Our Love</span>
+      <h2 class="sec-heading reveal-write" data-i18n="collage.title" style="--d:0.08s; text-align:center;">Always &amp; Forever.</h2>
       <div class="collage-grid">
         <div class="photo-slot polaroid collage-slot-a reveal-scale" data-label="Collage 1" style="--rot:-3.5deg; --d:0.08s">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">A Moment</span>
+          <span class="frame-caption" data-i18n="cap.a-moment">A Moment</span>
         </div>
         <div class="photo-slot polaroid collage-slot-b reveal-scale" data-label="Collage 2" style="--rot:1.8deg; --d:0.20s">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">A Memory</span>
+          <span class="frame-caption" data-i18n="cap.a-memory">A Memory</span>
         </div>
         <div class="photo-slot polaroid collage-slot-c reveal-scale" data-label="Collage 3" style="--rot:-2.2deg; --d:0.32s">
           <div class="frame-img-wrap">
             <span class="slot-icon">+</span>
-            <span class="slot-hint">Tap to add</span>
+            <span class="slot-hint" data-i18n="ui.tap">Tap to add</span>
           </div>
-          <span class="frame-caption">A Lifetime</span>
+          <span class="frame-caption" data-i18n="cap.a-lifetime">A Lifetime</span>
         </div>
       </div>
     </div>
   </section>
 
 
-  <!-- ══════════ FOOTER ══════════ -->
+  <!-- ══ FOOTER ══ -->
   <footer id="footer">
     <div class="footer-inner">
       <div class="footer-heart reveal-up">♡</div>
-      <p class="footer-title reveal-up" style="--d:0.10s">Happy Mother's Day</p>
-      <p class="footer-sub reveal-up" style="--d:0.20s">
-        Made with every bit of love your oldest child could fit onto a screen.
-      </p>
-      <p class="footer-arabic reveal-up" style="--d:0.30s">كل عام وأنتِ بخير يا أمي ❤️</p>
+      <p class="footer-title reveal-up" data-i18n="footer.title" style="--d:0.10s">Happy Mother's Day</p>
+      <p class="footer-sub reveal-up" data-i18n="footer.sub" style="--d:0.20s">Made with every bit of love your oldest child could fit onto a screen.</p>
+      <p class="footer-arabic reveal-up" data-i18n="footer.arabic" style="--d:0.30s">كل عام وأنتِ بخير يا أمي ❤️</p>
     </div>
   </footer>
 

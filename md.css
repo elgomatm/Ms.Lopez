@@ -882,3 +882,51 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 /* Safe area for notched phones */
 #footer { padding-bottom: max(clamp(60px,10vw,100px), env(safe-area-inset-bottom, 0px) + 40px); }
+
+
+/* ════════════════════════════════════════════════
+   ARABIC / RTL OVERRIDES
+════════════════════════════════════════════════ */
+#site.lang-ar {
+  font-family: var(--arabic);
+}
+#site.lang-ar .hero-title,
+#site.lang-ar .sec-heading,
+#site.lang-ar .hero-sub,
+#site.lang-ar .sec-intro,
+#site.lang-ar .body-text,
+#site.lang-ar .card-name,
+#site.lang-ar .card-desc,
+#site.lang-ar .pull-quote,
+#site.lang-ar .closing-love,
+#site.lang-ar .closing-sig,
+#site.lang-ar .sec-tag,
+#site.lang-ar .frame-caption,
+#site.lang-ar .scroll-cue span,
+#site.lang-ar .slot-hint,
+#site.lang-ar .footer-title,
+#site.lang-ar .footer-sub {
+  font-family: var(--arabic);
+}
+
+/* Flip the pull-quote border to the right side */
+#site.lang-ar .pull-quote {
+  border-left: none;
+  border-right: 2px solid rgba(196,104,122,0.3);
+  padding-left: 0;
+  padding-right: 20px;
+}
+
+/* Arabic heading sizes — Naskh reads slightly smaller than Latin serif */
+#site.lang-ar .hero-title {
+  font-size: clamp(2.8rem, 8vw, 5.6rem);
+  font-weight: 700;
+}
+#site.lang-ar .sec-heading {
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+}
+
+/* RTL: hero layout flips naturally with dir=rtl; just ensure text aligns right on mobile */
+@media (max-width: 760px) {
+  #site.lang-ar .hero-text { text-align: right; }
+}
