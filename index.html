@@ -2,339 +2,345 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Malik Elgomati</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Happy Mother's Day, Mama ♡</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Open Graph / link preview -->
-  <meta property="og:type"        content="website" />
-  <meta property="og:title"       content="Malik Elgomati" />
-  <meta property="og:description" content="A personal page for Ms. Lopez — family, sports, The Exotics Network, and everything in between." />
-  <meta name="twitter:card"       content="summary_large_image" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="md.css" />
+  <meta property="og:title" content="Happy Mother's Day, Mama ♡" />
+  <meta property="og:description" content="From your oldest, with all the love in the world." />
 </head>
 <body>
-  <div id="cur-dot"></div>
-  <div id="cur-ring"></div>
-  <div id="progress-bar"></div>
 
-  <!-- Side nav dots -->
-  <nav id="side-nav">
-    <a href="#hero"       class="side-dot" data-label="Hello"></a>
-    <a href="#family"     class="side-dot" data-label="Family"></a>
-    <a href="#background" class="side-dot" data-label="Background"></a>
-    <a href="#sports"     class="side-dot" data-label="Sports"></a>
-    <a href="#hobbies"    class="side-dot" data-label="Hobbies"></a>
-    <a href="#college"    class="side-dot" data-label="College"></a>
-    <a href="#switch"     class="side-dot" data-label="The Switch"></a>
-    <a href="#exotics"    class="side-dot" data-label="Today"></a>
-  </nav>
+<!-- ═══════════════════════════════════════
+     LOADING SCREEN
+═══════════════════════════════════════ -->
+<div id="loader">
 
-  <nav id="nav">
-    <span class="nav-name">MALIK ELGOMATI</span>
-    <span class="nav-note">A note for Ms. Lopez</span>
-  </nav>
-
-  <!-- ═══════════ HERO ═══════════ -->
-  <section id="hero" data-sec-id="hero">
-    <div class="hero-orb orb-1"></div>
-    <div class="hero-orb orb-2"></div>
-    <div class="hero-bg-text" aria-hidden="true">MALIK</div>
-    <div class="hero-content">
-      <h1 class="hero-greeting reveal-heading" style="--d:0.05s">Hello, Ms. Lopez.</h1>
-      <p class="hero-intro reveal-up" style="--d:0.35s">My name is Malik Elgomati and I designed this page in hopes you learn a little bit about me.</p>
+  <!-- Phase 1: Language Pick -->
+  <div id="loader-lang" class="loader-phase">
+    <div class="loader-heart-svg" aria-hidden="true">
+      <svg viewBox="0 0 100 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="heart-path"
+          d="M50 82 C 48 78, 8 58, 8 32 C 8 18, 18 8, 30 8 C 38 8, 45 13, 50 20 C 55 13, 62 8, 70 8 C 82 8, 92 18, 92 32 C 92 58, 52 78, 50 82 Z"
+          stroke="#C4687A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+      </svg>
     </div>
-    <div class="hero-photo-wrap reveal-scale" style="--d:0.2s">
-      <div class="photo-slot hero-slot" data-label="Your photo">
-        <span class="slot-icon">+</span>
-        <span class="slot-label">Your photo</span>
-      </div>
+    <h2 class="loader-main-title">Happy Mother's Day</h2>
+    <p class="loader-arabic-echo">عيد أم مبارك</p>
+    <p class="loader-choose-prompt">Choose your language to begin</p>
+    <div class="loader-lang-btns">
+      <button class="lang-btn" id="btn-en" aria-label="Continue in English">
+        <span class="lang-btn-name">English</span>
+        <span class="lang-btn-sub">In English</span>
+      </button>
+      <button class="lang-btn" id="btn-ar" aria-label="Continue in Arabic">
+        <span class="lang-btn-name">العربية</span>
+        <span class="lang-btn-sub">بالعربي</span>
+      </button>
     </div>
-    <div class="scroll-cue">
-      <div class="scroll-line-anim"></div>
-      <span>SCROLL</span>
-    </div>
-  </section>
+  </div>
 
-  <!-- ═══════════ FAMILY ═══════════ -->
-  <section class="sec" id="family" data-sec="01" data-sec-id="family">
-    <div class="sec-ghost" aria-hidden="true">01</div>
-    <div class="sec-layout">
-      <div class="sec-left">
-        <p class="sec-tag reveal-up">Family</p>
-        <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">The Elgomatis</h2>
-        <ul class="bullets">
-          <li class="reveal-left" style="--d:0.12s">Oldest of three loving siblings — we talk on the phone pretty much every single day.</li>
-          <li class="reveal-left" style="--d:0.22s">My sister, two years younger, graduated from CU Denver as an Engineering major and is now working as a Software Engineer — and getting married to her fiancé, which honestly still feels surreal. She's the one who's quietly kept a good head on my brother's and my shoulders our whole lives.</li>
-          <li class="reveal-left" style="--d:0.32s">My little brother, eight years younger, is currently studying Engineering at Brown University. It's genuinely hard to look at him now and not still see the scrawny little kid who used to come knock on my door just to ask me to game or play with him. Watching him grow into who he is has been one of the cooler things to witness.</li>
-        </ul>
-      </div>
-      <div class="photo-group family-photos">
-        <div class="photo-slot reveal-scale" style="--d:0.12s" data-label="Family">
-          <span class="slot-icon">+</span><span class="slot-label">Family</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.24s" data-label="Sister">
-          <span class="slot-icon">+</span><span class="slot-label">Sister</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.36s" data-label="Brother">
-          <span class="slot-icon">+</span><span class="slot-label">Brother</span>
-        </div>
-      </div>
+  <!-- Phase 2: Loading Animation -->
+  <div id="loader-anim" class="loader-phase" style="display:none; opacity:0;">
+    <div class="loader-pulse-heart" aria-hidden="true">♡</div>
+    <div class="loader-msg-area">
+      <p id="loader-msg-primary" class="loader-msg-p"></p>
+      <p id="loader-msg-secondary" class="loader-msg-s"></p>
     </div>
-  </section>
-
-  <!-- ═══════════ BACKGROUND ═══════════ -->
-  <section class="sec alt" id="background" data-sec="02" data-sec-id="background">
-    <div class="sec-ghost" aria-hidden="true">02</div>
-    <div class="sec-layout rev">
-      <div class="photo-group bg-photos">
-        <div class="photo-slot reveal-scale" style="--d:0.08s" data-label="Denver">
-          <span class="slot-icon">+</span><span class="slot-label">Denver</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.22s" data-label="Libya / Family">
-          <span class="slot-icon">+</span><span class="slot-label">Libya / Family</span>
-        </div>
-      </div>
-      <div class="sec-left">
-        <p class="sec-tag reveal-up">Background</p>
-        <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">Denver, Colorado</h2>
-        <ul class="bullets">
-          <li class="reveal-right" style="--d:0.14s">Raised in Denver by a Libyan mom and dad who left their life behind in Libya to ensure my siblings and I had the best opportunities to become successful.</li>
-          <li class="reveal-right" style="--d:0.24s">Arabic was our first language at home — we made very frequent trips back to Libya to visit family and make sure we held onto our culture and community.</li>
-          <li class="reveal-right" style="--d:0.34s">Mom has been shaping little kids' lives as an elementary school teacher for as long as I can remember.</li>
-          <li class="reveal-right" style="--d:0.44s">Dad started on the dealership floor at Honda and worked his way up to manager over the years.</li>
-        </ul>
-      </div>
+    <div class="loader-bar-track">
+      <div id="loader-bar"></div>
     </div>
-  </section>
+    <p class="loader-sig">— Malik</p>
+  </div>
 
-  <!-- ═══════════ SPORTS ═══════════ -->
-  <section class="sec" id="sports" data-sec="03" data-sec-id="sports">
-    <div class="sec-ghost" aria-hidden="true">03</div>
-    <div class="sec-single">
-      <div class="sec-top-row">
-        <div>
-          <p class="sec-tag reveal-up">High School</p>
-          <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">Sports</h2>
-        </div>
-        <div class="sport-tags reveal-up" style="--d:0.18s">
-          <span class="stag">Soccer</span>
-          <span class="stag">Football</span>
-        </div>
-      </div>
-      <p class="sec-body reveal-up" style="--d:0.22s">Playing competitive sports through high school did something to the way I see the body — not just as an athlete, but as someone genuinely curious about how it holds up and why it breaks down.</p>
-      <div class="callout reveal-scale" style="--d:0.28s">
-        <span class="callout-label">Fun Fact</span>
-        <p>Over the years I broke both elbows, both collar bones, and both wrists playing different sports. Rather than scaring me off, it only made me want to be on the other side of those emergency visits — the one providing the care.</p>
-      </div>
-      <div class="photo-grid">
-        <div class="photo-slot grid-slot reveal-scale" style="--d:0.08s" data-label="Soccer">
-          <span class="slot-icon">+</span><span class="slot-label">Soccer</span>
-        </div>
-        <div class="photo-slot grid-slot tall reveal-scale" style="--d:0.18s" data-label="Football">
-          <span class="slot-icon">+</span><span class="slot-label">Football</span>
-        </div>
-        <div class="photo-slot grid-slot reveal-scale" style="--d:0.28s" data-label="Team">
-          <span class="slot-icon">+</span><span class="slot-label">Team</span>
-        </div>
-      </div>
-    </div>
-  </section>
+</div><!-- #loader -->
 
-  <!-- ═══════════ HOBBIES ═══════════ -->
-  <section class="sec alt" id="hobbies" data-sec="04" data-sec-id="hobbies">
-    <div class="sec-ghost" aria-hidden="true">04</div>
-    <div class="sec-layout">
-      <div class="sec-left">
-        <p class="sec-tag reveal-up">Off the Clock</p>
-        <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">Hobbies</h2>
-        <ul class="bullets">
-          <li class="reveal-left" style="--d:0.14s">The gym is a non-negotiable — it's where I reset. Being active has always been part of who I am and that doesn't stop when a sports season ends.</li>
-          <li class="reveal-left" style="--d:0.24s">Snowboarding every winter. Living in Colorado, it'd honestly be a crime not to.</li>
-          <li class="reveal-left" style="--d:0.34s">I sign up for marathons I have absolutely no business running in — and then I run them anyway, every single time. It started as a bit, and somehow never stopped.</li>
-          <li class="reveal-left" style="--d:0.44s">And when I'm not doing any of that, I'm gaming on the PC with my boys — one of the best ways to stay close with people no matter where everyone ends up.</li>
-        </ul>
-      </div>
-      <div class="photo-group hobbies-photos">
-        <div class="photo-slot reveal-scale" style="--d:0.12s" data-label="Gym">
-          <span class="slot-icon">+</span><span class="slot-label">Gym</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.26s" data-label="Snowboarding">
-          <span class="slot-icon">+</span><span class="slot-label">Snowboarding</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.40s" data-label="Marathon">
-          <span class="slot-icon">+</span><span class="slot-label">Marathon</span>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ═══════════ COLLEGE ═══════════ -->
-  <section class="sec" id="college" data-sec="05" data-sec-id="college">
-    <div class="sec-ghost" aria-hidden="true">05</div>
-    <div class="sec-layout">
-      <div class="sec-left">
-        <p class="sec-tag reveal-up">College</p>
-        <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">Biology</h2>
-        <ul class="bullets">
-          <li class="reveal-left" style="--d:0.14s">Majored in Biology — a natural extension of years spent genuinely caring about how the body works.</li>
-          <li class="reveal-left" style="--d:0.24s">Clinical experience included working as a medical assistant, dental assistant, and lab technician.</li>
-          <li class="reveal-left" style="--d:0.34s">Went pre-med and completed full clinical rounds, which showed me exactly what medicine looks like up close.</li>
-          <li class="reveal-left" style="--d:0.44s">Made it to about junior year before the bureaucracy and the structure of the US medical system had me seriously questioning whether it was worth navigating just to do the one thing I actually wanted — provide care.</li>
-        </ul>
-      </div>
-      <div class="photo-group college-photos">
-        <div class="photo-slot reveal-scale" style="--d:0.12s" data-label="Campus">
-          <span class="slot-icon">+</span><span class="slot-label">Campus</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.24s" data-label="Clinical">
-          <span class="slot-icon">+</span><span class="slot-label">Clinical</span>
-        </div>
-        <div class="photo-slot reveal-scale" style="--d:0.36s" data-label="Lab">
-          <span class="slot-icon">+</span><span class="slot-label">Lab</span>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- ═══════════════════════════════════════
+     MAIN SITE
+═══════════════════════════════════════ -->
+<div id="site" style="display:none; opacity:0;">
 
-  <!-- ═══════════ THE SWITCH ═══════════ -->
-  <section class="sec alt" id="switch" data-sec="06" data-sec-id="switch">
-    <div class="sec-ghost" aria-hidden="true">06</div>
-    <div class="sec-layout rev">
-      <div class="photo-group switch-photos">
-        <div class="photo-slot reveal-scale" style="--d:0.08s" data-label="The PC Build">
-          <span class="slot-icon">+</span><span class="slot-label">The PC Build</span>
-        </div>
-        <div class="pg-duo">
-          <div class="photo-slot reveal-scale" style="--d:0.20s" data-label="Cognizant">
-            <span class="slot-icon">+</span><span class="slot-label">Cognizant</span>
+  <!-- Floating ambient particles -->
+  <div id="particles" aria-hidden="true"></div>
+
+  <!-- ══════════ 1. DEAR MAMA — HERO ══════════ -->
+  <section id="dear-mama" class="sec hero-sec">
+    <div class="orb orb-rose-lg"></div>
+    <div class="orb orb-lavender-lg"></div>
+    <div class="hero-inner">
+
+      <div class="hero-text">
+        <span class="sec-tag reveal-up" style="--d:0.10s">A Letter</span>
+        <h1 class="hero-title reveal-write" data-font="cursive" style="--d:0.30s">Dear Mama.</h1>
+        <p class="hero-sub reveal-up" style="--d:0.65s">
+          To the woman who built an entire world from nothing<br class="hide-mobile"/> so her children could have everything.
+        </p>
+      </div>
+
+      <div class="hero-photo reveal-scale" style="--d:0.45s">
+        <div class="photo-slot polaroid" data-label="Dear Mama" style="--rot:-2.2deg">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
           </div>
-          <div class="photo-slot reveal-scale" style="--d:0.32s" data-label="Gaming Setup">
-            <span class="slot-icon">+</span><span class="slot-label">Gaming Setup</span>
+          <span class="frame-caption">Mama &amp; Me</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="scroll-cue reveal-up" style="--d:1.0s">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+
+  <!-- ══════════ 2. THE SACRIFICE ══════════ -->
+  <section id="sacrifice" class="sec alt-bg">
+    <div class="orb orb-peach-md"></div>
+    <div class="sec-inner">
+      <span class="sec-tag reveal-up">The Beginning</span>
+      <h2 class="sec-heading reveal-write" style="--d:0.08s">From Libya, With Everything.</h2>
+
+      <div class="glass-card reveal-scale" style="--d:0.18s">
+        <p class="body-text reveal-up" style="--d:0.24s">
+          You left behind everything familiar — your family, your home, your language, the streets you grew up on —
+          and stepped into a country that didn't know your name, didn't speak your tongue,
+          and didn't owe you a single thing.
+        </p>
+        <p class="body-text reveal-up" style="--d:0.34s">
+          Most people never understand what that truly takes. To build a life from a blank page,
+          in a place you didn't choose, with people you didn't know, in a language you were still learning —
+          and to do it not for yourself, but for children who weren't even old enough to understand what sacrifice meant.
+        </p>
+        <p class="body-text reveal-up" style="--d:0.44s">
+          You built something beautiful, Mama. And you built it from nothing but love and faith.
+        </p>
+        <blockquote class="pull-quote reveal-up" style="--d:0.54s">
+          "She didn't just raise a family. She built a home — out of faith, out of grit,
+          and out of a love so steady it never needed saying."
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ 3. LOOK WHAT YOU BUILT ══════════ -->
+  <section id="fruits" class="sec">
+    <div class="orb orb-sage-md"></div>
+    <div class="sec-inner">
+      <span class="sec-tag reveal-up">Your Legacy</span>
+      <h2 class="sec-heading reveal-write" style="--d:0.08s">Look What You Built.</h2>
+
+      <p class="sec-intro reveal-up" style="--d:0.16s">
+        Whether your health had its hiccups, or you quietly felt the weight of being far from your own family —
+        the meals were always cooked. The clothes were always there. The house was always known in our community
+        as the most generous, most welcoming place anyone had ever walked into. You never took a day off from being our mom.
+      </p>
+
+      <!-- Three kids -->
+      <div class="three-col">
+
+        <div class="photo-card reveal-scale" style="--d:0.10s">
+          <div class="photo-slot polaroid" data-label="Anis" style="--rot:1.8deg">
+            <div class="frame-img-wrap">
+              <span class="slot-icon">+</span>
+              <span class="slot-hint">Tap to add</span>
+            </div>
+            <span class="frame-caption">Anis</span>
+          </div>
+          <div class="photo-card-body glass-card-sm reveal-up" style="--d:0.20s">
+            <h3 class="card-name">Anis</h3>
+            <p class="card-desc">Your youngest — now studying Engineering at Brown University on the East Coast. The scrawny little kid who knocked on my door just to play is now stepping into something great.</p>
           </div>
         </div>
+
+        <div class="photo-card reveal-scale" style="--d:0.22s">
+          <div class="photo-slot polaroid" data-label="Daniah" style="--rot:-1.4deg">
+            <div class="frame-img-wrap">
+              <span class="slot-icon">+</span>
+              <span class="slot-hint">Tap to add</span>
+            </div>
+            <span class="frame-caption">Daniah</span>
+          </div>
+          <div class="photo-card-body glass-card-sm reveal-up" style="--d:0.32s">
+            <h3 class="card-name">Daniah</h3>
+            <p class="card-desc">Your middle — CU Denver Engineering grad, now working as a Software Engineer, and about to get married. The one who quietly kept Anis and I on track our entire lives.</p>
+          </div>
+        </div>
+
+        <div class="photo-card reveal-scale" style="--d:0.34s">
+          <div class="photo-slot polaroid" data-label="Malik" style="--rot:2.4deg">
+            <div class="frame-img-wrap">
+              <span class="slot-icon">+</span>
+              <span class="slot-hint">Tap to add</span>
+            </div>
+            <span class="frame-caption">Malik</span>
+          </div>
+          <div class="photo-card-body glass-card-sm reveal-up" style="--d:0.44s">
+            <h3 class="card-name">Malik</h3>
+            <p class="card-desc">Your oldest — a Software Engineer pursuing entrepreneurship in Texas. Still chasing what you always told me was worth chasing: something I could call my own.</p>
+          </div>
+        </div>
+
+      </div><!-- .three-col -->
+
+      <div class="glass-card reveal-scale" style="--d:0.50s">
+        <p class="body-text reveal-up" style="--d:0.55s">
+          Three kids. Three degrees. Three lives you shaped from the ground up with nothing but your own two hands.
+          You were our shoulder when relationships fell apart. Our backbone when we wanted to give up.
+          The voice of reason when everything felt impossible. And through all of it — you never asked for a single thing in return.
+        </p>
+        <p class="body-text reveal-up" style="--d:0.65s">
+          Multiple people have told me directly — your home is <em>known</em>. Known for the food
+          that's always there, for the warmth that greets anyone who walks through the door, for
+          the way you treat every guest like family. <em>You</em> built that reputation.
+        </p>
       </div>
-      <div class="sec-left">
-        <p class="sec-tag reveal-up">The Pivot</p>
-        <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">The Switch</h2>
-        <ul class="bullets">
-          <li class="reveal-right" style="--d:0.14s">During COVID I built my own PC — and it changed everything. I'd gamed my whole life, so engineering felt surprisingly natural.</li>
-          <li class="reveal-right" style="--d:0.24s">It changed the lens through which I viewed everything — the internet, devices, cars, anything involving tech. It felt like my eyes had been opened in a way I'd never experienced before.</li>
-          <li class="reveal-right" style="--d:0.34s">Made the decision to switch halfway through junior year and gave myself two options heading into graduation: find a Software Engineering job within 6 months — or go to medical school. I had all the prerequisites and clinical rounds done either way.</li>
-          <li class="reveal-right" style="--d:0.44s">Landed a role as an AI Software Engineer at Cognizant — and haven't looked back.</li>
-        </ul>
-        <div class="callout reveal-scale" style="--d:0.50s">
-          <span class="callout-label">The Ultimatum</span>
-          <p>6 months to find a SWE job — or medical school. No in between.</p>
+    </div>
+  </section>
+
+
+  <!-- ══════════ 4. THOUGH MILES APART ══════════ -->
+  <section id="apart" class="sec alt-bg">
+    <div class="orb orb-lavender-sm"></div>
+    <div class="sec-inner">
+      <span class="sec-tag reveal-up">This Year</span>
+      <h2 class="sec-heading reveal-write" style="--d:0.08s">Though Miles Apart.</h2>
+
+      <div class="two-col-photos">
+        <div class="photo-slot polaroid reveal-scale" data-label="Apart 1" style="--rot:-3.0deg; --d:0.12s">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
+          </div>
+          <span class="frame-caption">With Love</span>
+        </div>
+        <div class="photo-slot polaroid reveal-scale" data-label="Apart 2" style="--rot:2.2deg; --d:0.26s">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
+          </div>
+          <span class="frame-caption">Always</span>
+        </div>
+      </div>
+
+      <div class="glass-card reveal-scale" style="--d:0.32s">
+        <p class="body-text reveal-up" style="--d:0.38s">
+          I know we have our differences. I always knew that. But what I didn't know —
+          what I only started to truly understand after moving out and being on my own —
+          is just how much you were doing every single day without ever making it a thing.
+        </p>
+        <p class="body-text reveal-up" style="--d:0.48s">
+          This is the first Mother's Day we spend apart. I always thought of you as superwoman —
+          and I still do — but now I get it. Now I understand the real weight behind it all.
+          And I want you to know: Anis and I are missing you. Every single day.
+        </p>
+        <p class="body-text reveal-up" style="--d:0.58s">
+          I notice your absence in everything. In the quiet of a morning with no food already made.
+          In a hard day with no one to call who truly, fully knows me.
+          In every little thing I never stopped to notice when you were right there.
+        </p>
+        <blockquote class="pull-quote reveal-up" style="--d:0.68s">
+          "Through thick and thin, Mama — we all love you. May Allah bless every struggle,
+          every tear shed, and every sacrifice you have ever made for us."
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════ 5. JUST A CHAPTER ══════════ -->
+  <section id="chapter" class="sec">
+    <div class="orb orb-rose-sm"></div>
+    <div class="sec-inner">
+      <span class="sec-tag reveal-up">Looking Forward</span>
+      <h2 class="sec-heading reveal-write" style="--d:0.08s">Just A Chapter.</h2>
+
+      <div class="chapter-layout">
+        <div class="photo-slot polaroid reveal-scale chapter-photo" data-label="Chapter" style="--rot:-2.6deg; --d:0.15s">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
+          </div>
+          <span class="frame-caption">Until Then</span>
+        </div>
+        <div class="chapter-text">
+          <div class="glass-card reveal-scale" style="--d:0.20s">
+            <p class="body-text reveal-up" style="--d:0.26s">
+              Inshallah, Mama — this is just a chapter. Not the whole book.
+            </p>
+            <p class="body-text reveal-up" style="--d:0.36s">
+              Anis will graduate and come back. I will move back after this company takes off —
+              after I can stand in front of you and say I built something I'm proud of.
+              And we will all be reunited. In the same city. Around the same table.
+            </p>
+            <p class="body-text reveal-up" style="--d:0.46s">
+              Until then, stay strong for us. You've always been so unbelievably strong —
+              and now it really gets tested. But I am so confident you will make it through,
+              because everything you have ever done has been for the sake of us.
+              And that is a strength no distance can ever touch.
+            </p>
+            <p class="closing-love reveal-up" style="--d:0.58s">
+              Happy Mother's Day, Mama.<br/>I love you.
+            </p>
+            <p class="closing-sig reveal-up" style="--d:0.68s">— Malik</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ TODAY — THE EXOTICS NETWORK ═══════════ -->
-  <section class="sec exotics-sec" id="exotics" data-sec="07" data-sec-id="exotics">
-    <div class="sec-ghost" aria-hidden="true">07</div>
-    <div class="exotics-header">
-      <p class="sec-tag reveal-up">Today</p>
-      <div class="exotics-title-row">
-        <h2 class="sec-heading scramble reveal-heading" style="--d:0.08s">The Exotics Network</h2>
-        <span class="exotics-badge reveal-up" style="--d:0.18s">Est. 2023</span>
-      </div>
-    </div>
-    <div class="exotics-layout">
-      <div class="exotics-text">
-        <ul class="bullets">
-          <li class="reveal-up" style="--d:0.14s">Realized quickly that as comfortable as a salary might be, I wanted to directly contribute to something I owned and could grow — not answer to a boss inside a 360,000-person company.</li>
-          <li class="reveal-up" style="--d:0.24s">Was part of the original conversation that sparked The Exotics Network — helped come up with the idea alongside my friends, who then built it into something real. As the company started to truly come to life, I made the decision to move out and be closer to where things were happening.</li>
-          <li class="reveal-up" style="--d:0.34s">In a year and a half the company has grown insanely. We've received multiple investment offers and are now looking to form a board.</li>
-          <li class="reveal-up" style="--d:0.44s">Our first international event is happening this summer — and we're looking to bring on employees by the end of the year.</li>
-          <li class="reveal-up" style="--d:0.54s">Still running both full time until the moment feels right to finally make the full leap.</li>
-        </ul>
-        <div class="stat-strip reveal-up" style="--d:0.60s">
-          <div class="stat">
-            <span class="stat-num">30+</span>
-            <span class="stat-label">Events Thrown</span>
+
+  <!-- ══════════ 6. PHOTO COLLAGE ══════════ -->
+  <section id="collage" class="sec alt-bg collage-sec">
+    <div class="sec-inner">
+      <span class="sec-tag reveal-up" style="text-align:center;">With All Our Love</span>
+      <h2 class="sec-heading reveal-write" style="--d:0.08s; text-align:center;">Always &amp; Forever.</h2>
+      <div class="collage-grid">
+        <div class="photo-slot polaroid collage-slot-a reveal-scale" data-label="Collage 1" style="--rot:-3.5deg; --d:0.08s">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
           </div>
-          <div class="stat">
-            <span class="stat-num">200K+</span>
-            <span class="stat-label">Followers</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num">20+</span>
-            <span class="stat-label">Official Partners</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num">7</span>
-            <span class="stat-label">Person Team</span>
-          </div>
-          <div class="stat">
-            <span class="stat-num">1st</span>
-            <span class="stat-label">Intl. Event '26</span>
-          </div>
+          <span class="frame-caption">A Moment</span>
         </div>
-      </div>
-      <div class="exotics-photos">
-        <div class="photo-slot exotics-slot-lg reveal-scale" style="--d:0.12s" data-label="Event">
-          <span class="slot-icon">+</span><span class="slot-label">Event</span>
+        <div class="photo-slot polaroid collage-slot-b reveal-scale" data-label="Collage 2" style="--rot:1.8deg; --d:0.20s">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
+          </div>
+          <span class="frame-caption">A Memory</span>
         </div>
-        <div class="exotics-slot-row">
-          <div class="photo-slot exotics-slot-sm reveal-scale" style="--d:0.24s" data-label="The Cars">
-            <span class="slot-icon">+</span><span class="slot-label">The Cars</span>
+        <div class="photo-slot polaroid collage-slot-c reveal-scale" data-label="Collage 3" style="--rot:-2.2deg; --d:0.32s">
+          <div class="frame-img-wrap">
+            <span class="slot-icon">+</span>
+            <span class="slot-hint">Tap to add</span>
           </div>
-          <div class="photo-slot exotics-slot-sm reveal-scale" style="--d:0.36s" data-label="The Team">
-            <span class="slot-icon">+</span><span class="slot-label">The Team</span>
-          </div>
+          <span class="frame-caption">A Lifetime</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ CLOSING NOTE ═══════════ -->
-  <section class="sec closing-sec" id="closing">
-    <div class="closing-inner">
-      <p class="sec-tag reveal-up">One Last Thing</p>
-      <p class="closing-note reveal-up" style="--d:0.14s">I genuinely am excited and looking forward to our FaceTime, Ms. Lopez. I put this together because I wanted you to get a real sense of who I am before we connect — and please don't feel shy to ask me about anything when we do!</p>
-      <p class="closing-sign reveal-up" style="--d:0.28s">— Malik</p>
-    </div>
-  </section>
 
-  <!-- ═══════════ LINKS ═══════════ -->
-  <section class="sec alt links-sec" id="links">
-    <div class="links-inner">
-      <p class="sec-tag reveal-up" style="text-align:center; margin-bottom:40px;">While You're Here</p>
-      <div class="link-cards">
-        <a class="link-card reveal-scale" style="--d:0.08s" href="https://www.linkedin.com/in/malik-elgomati/" target="_blank" rel="noopener">
-          <span class="link-card-icon">in</span>
-          <span class="link-card-label">LinkedIn</span>
-          <span class="link-card-sub">linkedin.com/in/malik-elgomati</span>
-          <span class="link-card-arrow">↗</span>
-        </a>
-        <a class="link-card reveal-scale" style="--d:0.20s" href="https://www.instagram.com/m4lookl/" target="_blank" rel="noopener">
-          <span class="link-card-icon">✦</span>
-          <span class="link-card-label">Instagram</span>
-          <span class="link-card-sub">@m4lookl</span>
-          <span class="link-card-arrow">↗</span>
-        </a>
-        <a class="link-card reveal-scale" style="--d:0.32s" href="https://www.theexoticsnetwork.com/" target="_blank" rel="noopener">
-          <span class="link-card-icon">⬡</span>
-          <span class="link-card-label">The Exotics Network</span>
-          <span class="link-card-sub">theexoticsnetwork.com</span>
-          <span class="link-card-arrow">↗</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════ FOOTER ═══════════ -->
+  <!-- ══════════ FOOTER ══════════ -->
   <footer id="footer">
     <div class="footer-inner">
-      <p class="footer-line reveal-up">Thank you for taking the time. Talk to you soon!</p>
-      <p class="footer-sig reveal-up" style="--d:0.14s">Ms. Lopez.</p>
+      <div class="footer-heart reveal-up">♡</div>
+      <p class="footer-title reveal-up" style="--d:0.10s">Happy Mother's Day</p>
+      <p class="footer-sub reveal-up" style="--d:0.20s">
+        Made with every bit of love your oldest child could fit onto a screen.
+      </p>
+      <p class="footer-arabic reveal-up" style="--d:0.30s">كل عام وأنتِ بخير يا أمي ❤️</p>
     </div>
   </footer>
 
-  <script src="script.js"></script>
+</div><!-- #site -->
+
+<script src="md.js"></script>
 </body>
 </html>
