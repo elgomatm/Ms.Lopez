@@ -570,13 +570,17 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   position: relative;
 }
 
-/* Frame image area */
+/* Frame image area — no forced aspect ratio; photo dictates height */
 .frame-img-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #f2eff2;
+}
+
+/* Empty state: show a minimum tap target with centred icon */
+.photo-slot:not(.has-photo) .frame-img-wrap {
+  min-height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -597,19 +601,22 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   text-transform: uppercase;
   color: rgba(196,104,122,0.4);
 }
-.photo-slot:hover .slot-icon {
+.photo-slot:not(.has-photo):hover .slot-icon {
   color: rgba(196,104,122,0.7);
   transform: scale(1.15);
 }
 
-/* Uploaded image */
+/* Uploaded image — natural size, frame wraps around it */
 .slot-photo {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
   display: block;
+  position: static;
+}
+
+/* Locked after upload — no pointer, no upload hover cue */
+.photo-slot.has-photo {
+  cursor: default;
 }
 
 /* Caption below image (stays after upload) */

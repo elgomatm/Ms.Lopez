@@ -543,6 +543,7 @@ function initPhotoSlots() {
   /* 3. Wire click → file input */
   document.querySelectorAll('.photo-slot').forEach(slot => {
     slot.addEventListener('click', () => {
+      if (slot.classList.contains('has-photo')) return; /* locked after upload */
       const inp    = document.createElement('input');
       inp.type     = 'file';
       inp.accept   = 'image/*';
