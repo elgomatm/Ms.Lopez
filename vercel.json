@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/md-upload.js":      { "maxDuration": 30 },
-    "api/md-save-photos.js": { "maxDuration": 10 },
-    "api/md-load-photos.js": { "maxDuration": 10 }
-  }
-}
