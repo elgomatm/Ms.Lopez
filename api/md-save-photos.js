@@ -1,11 +1,8 @@
-/* ── api/md-save-photos.js ───────────────────────
-   Persists the slot→blobUrl manifest to Vercel Blob.
-   Uses md-photos-manifest.json to avoid collision
-   with the ms-lopez manifest on the same storage.
-─────────────────────────────────────────────── */
 const { put } = require('@vercel/blob');
 
-const BLOB_TOKEN = 'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
+process.env.BLOB_READ_WRITE_TOKEN =
+  process.env.BLOB_READ_WRITE_TOKEN ||
+  'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
 
 const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,7 +21,6 @@ const handler = async (req, res) => {
       access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false,
-      token: BLOB_TOKEN,
     });
     return res.status(200).json({ url: blob.url, count: Object.keys(photos).length });
   } catch (err) {

@@ -1,10 +1,9 @@
-/* ── api/md-upload.js ────────────────────────────
-   Uploads a single base64 photo to Vercel Blob.
-   Mother's Day site — separate from ms-lopez upload.
-─────────────────────────────────────────────── */
 const { put } = require('@vercel/blob');
 
-const BLOB_TOKEN = 'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
+/* Guarantee the token is always available as the env var @vercel/blob reads */
+process.env.BLOB_READ_WRITE_TOKEN =
+  process.env.BLOB_READ_WRITE_TOKEN ||
+  'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
 
 const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -26,7 +25,6 @@ const handler = async (req, res) => {
     const blob = await put(filename || `md-photo-${Date.now()}.jpg`, buffer, {
       access: 'public',
       contentType,
-      token: BLOB_TOKEN,
     });
     return res.status(200).json({ url: blob.url });
   } catch (err) {

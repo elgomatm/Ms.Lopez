@@ -1,10 +1,8 @@
-/* ── api/md-load-photos.js ───────────────────────
-   Returns the saved slot→blobUrl manifest so the
-   browser can restore photos on every page load.
-─────────────────────────────────────────────── */
 const { list } = require('@vercel/blob');
 
-const BLOB_TOKEN = 'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
+process.env.BLOB_READ_WRITE_TOKEN =
+  process.env.BLOB_READ_WRITE_TOKEN ||
+  'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
 
 const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +12,7 @@ const handler = async (req, res) => {
   if (req.method !== 'GET')    return res.status(405).json({ error: 'GET only' });
 
   try {
-    const { blobs } = await list({ prefix: 'md-photos-manifest', limit: 1, token: BLOB_TOKEN });
+    const { blobs } = await list({ prefix: 'md-photos-manifest', limit: 1 });
     if (!blobs.length) return res.status(200).json({ photos: {} });
 
     const r = await fetch(blobs[0].url + `?t=${Date.now()}`);
