@@ -5,16 +5,14 @@
 ─────────────────────────────────────────────── */
 const { put } = require('@vercel/blob');
 
+const BLOB_TOKEN = 'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
+
 const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')   return res.status(405).json({ error: 'POST only' });
-
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return res.status(503).json({ error: 'Blob not configured' });
-  }
 
   const { photos } = req.body || {};
   if (!photos || typeof photos !== 'object') {
@@ -26,6 +24,7 @@ const handler = async (req, res) => {
       access: 'public',
       contentType: 'application/json',
       addRandomSuffix: false,
+      token: BLOB_TOKEN,
     });
     return res.status(200).json({ url: blob.url, count: Object.keys(photos).length });
   } catch (err) {

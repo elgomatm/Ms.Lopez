@@ -369,7 +369,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .sec-heading {
   font-family: var(--serif);
   font-size: clamp(2.2rem, 6vw, 3.8rem);
-  font-weight: 300;
+  font-weight: 600;
   line-height: 1.15;
   color: var(--text);
   letter-spacing: -0.01em;
@@ -402,7 +402,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .sec-intro {
   font-family: var(--serif);
   font-size: clamp(1.05rem, 2.5vw, 1.25rem);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.75;
   color: var(--text-sec);
   font-style: italic;
@@ -413,7 +413,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .body-text {
   font-family: var(--sans);
   font-size: clamp(0.9rem, 2vw, 1.05rem);
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.85;
   color: var(--text-sec);
 }
@@ -425,7 +425,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   font-family: var(--serif);
   font-size: clamp(1rem, 2.5vw, 1.25rem);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text-rose);
   line-height: 1.7;
   padding: 20px 0 0 20px;
@@ -497,7 +497,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   font-family: var(--serif);
   font-size: clamp(1rem, 2.5vw, 1.3rem);
   font-style: italic;
-  font-weight: 300;
+  font-weight: 400;
   color: var(--text-sec);
   line-height: 1.7;
   max-width: 420px;
@@ -737,7 +737,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 .card-name {
   font-family: var(--serif);
   font-size: 1.15rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 8px;
 }
@@ -745,7 +745,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   font-size: 0.85rem;
   color: var(--text-sec);
   line-height: 1.7;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 @media (max-width: 760px) {
@@ -943,6 +943,15 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 #site.lang-ar .sec-heading {
   font-size: clamp(2rem, 5.5vw, 3.4rem);
+  font-weight: 700;
+}
+#site.lang-ar .body-text,
+#site.lang-ar .sec-intro,
+#site.lang-ar .card-desc {
+  font-weight: 500;
+}
+#site.lang-ar .pull-quote {
+  font-weight: 700;
 }
 
 /* RTL: hero layout flips naturally with dir=rtl; just ensure text aligns right on mobile */

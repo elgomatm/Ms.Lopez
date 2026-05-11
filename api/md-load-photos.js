@@ -4,6 +4,8 @@
 ─────────────────────────────────────────────── */
 const { list } = require('@vercel/blob');
 
+const BLOB_TOKEN = 'vercel_blob_rw_t4wgybeW1HuvMfqo_bxx1vVmLEb11XWvVwEzeKAJmw2kHVE';
+
 const handler = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -11,12 +13,8 @@ const handler = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET')    return res.status(405).json({ error: 'GET only' });
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    return res.status(200).json({ photos: {} });
-  }
-
   try {
-    const { blobs } = await list({ prefix: 'md-photos-manifest', limit: 1 });
+    const { blobs } = await list({ prefix: 'md-photos-manifest', limit: 1, token: BLOB_TOKEN });
     if (!blobs.length) return res.status(200).json({ photos: {} });
 
     const r = await fetch(blobs[0].url + `?t=${Date.now()}`);
