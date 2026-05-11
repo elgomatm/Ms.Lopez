@@ -568,13 +568,59 @@ async function uploadAndPersist(file, label, objectUrl) {
   }
 }
 
+/* Auto-sync: if IndexedDB has dataUrls that never made it to Blob,
+   upload them silently in the background on the next page load. */
+async function autoSyncToBlob(cached) {
+  const needSync = Object.entries(cached).filter(([, src]) => src.startsWith('data:'));
+  if (!needSync.length) return;
+
+  const manifest = {};
+
+  /* Carry forward any already-permanent URLs (from a previous successful upload) */
+  for (const [label, src] of Object.entries(cached)) {
+    if (!src.startsWith('data:') && !src.startsWith('blob:')) manifest[label] = src;
+  }
+
+  /* Upload each dataUrl photo to Blob */
+  await Promise.all(needSync.map(async ([label, dataUrl]) => {
+    try {
+      const fname  = `md-photo-${label.replace(/\s+/g, '-')}-${Date.now()}.jpg`;
+      const res    = await fetch('/api/md-upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dataUrl, filename: fname }),
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data.url) return;
+
+      /* Swap display + IDB to permanent URL */
+      const slot = document.querySelector(`.photo-slot[data-label="${CSS.escape(label)}"]`);
+      const img  = slot?.querySelector('.slot-photo');
+      if (img) img.src = data.url;
+      await idbSave(label, data.url);
+      manifest[label] = data.url;
+    } catch (_) {}
+  }));
+
+  /* Save manifest so every other device can now load the photos */
+  if (Object.keys(manifest).length) {
+    await fetch('/api/md-save-photos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photos: manifest }),
+    }).catch(() => {});
+  }
+}
+
 function initPhotoSlots() {
-  /* 1. Restore from IndexedDB immediately (works offline & on localhost) */
+  /* 1. Restore from IndexedDB + auto-push any unsynced photos to Blob */
   idbLoadAll().then(cached => {
     document.querySelectorAll('.photo-slot').forEach(slot => {
       const src = cached[slot.dataset.label || ''];
       if (src) applyPhoto(slot, src);
     });
+    autoSyncToBlob(cached); /* silent background sync — no re-upload needed */
   });
 
   /* 2. Load manifest from Vercel Blob (cross-device) */
