@@ -619,6 +619,18 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   cursor: default;
 }
 
+/* Drag-over highlight */
+.photo-slot.drag-over {
+  outline: 2px dashed var(--rose-deep);
+  outline-offset: -3px;
+  background: rgba(196,104,122,0.04);
+  transform: rotate(0deg) scale(1.03) !important;
+}
+.photo-slot.drag-over .slot-icon {
+  color: rgba(196,104,122,0.75) !important;
+  transform: scale(1.2);
+}
+
 /* Caption below image (stays after upload) */
 .frame-caption {
   position: absolute;

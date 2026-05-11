@@ -564,6 +564,28 @@ function initPhotoSlots() {
       inp.click();
     });
 
+    /* Drag-and-drop upload */
+    slot.addEventListener('dragover', e => {
+      if (slot.classList.contains('has-photo')) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      slot.classList.add('drag-over');
+    });
+    slot.addEventListener('dragleave', e => {
+      if (!slot.contains(e.relatedTarget)) slot.classList.remove('drag-over');
+    });
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      slot.classList.remove('drag-over');
+      if (slot.classList.contains('has-photo')) return;
+      const file = e.dataTransfer.files[0];
+      if (!file || !file.type.startsWith('image/')) return;
+      const label     = slot.dataset.label || slot.className;
+      const objectUrl = URL.createObjectURL(file);
+      applyPhoto(slot, objectUrl);
+      uploadAndPersist(file, label, objectUrl);
+    });
+
     /* 3D tilt on hover (desktop) */
     slot.addEventListener('mousemove', e => {
       if (!slot.classList.contains('has-photo')) return;
