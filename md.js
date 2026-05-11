@@ -52,8 +52,8 @@ const LANG = {
     }, 280);
   }
 
-  document.getElementById('btn-en').addEventListener('click', () => { selectedLang = "en"; startLoading('en'); });
-  document.getElementById('btn-ar').addEventListener('click', () => { selectedLang = "ar"; startLoading('ar'); });
+  document.getElementById('btn-en').addEventListener('click', () => { selectedLang = "en"; startBgm(); startLoading('en'); });
+  document.getElementById('btn-ar').addEventListener('click', () => { selectedLang = "ar"; startBgm(); startLoading('ar'); });
 })();
 
 function startLoading(lang) {
@@ -601,4 +601,33 @@ function initPhotoSlots() {
       slot.style.transform = `rotate(${rot})`;
     });
   });
+}
+
+/* ─── BACKGROUND MUSIC ─────────────────────────────────────────────────── */
+function startBgm() {
+  const bgm = document.getElementById('bgm');
+  if (!bgm) return;
+
+  bgm.volume = 0;
+  bgm.play().catch(() => {});
+
+  // Fade in over 3 seconds
+  let vol = 0;
+  const fadeIn = setInterval(() => {
+    vol = Math.min(vol + 0.02, 0.35);
+    bgm.volume = vol;
+    if (vol >= 0.35) clearInterval(fadeIn);
+  }, 60);
+
+  // Inject mute toggle button
+  const btn = document.createElement('button');
+  btn.id = 'bgm-toggle';
+  btn.setAttribute('aria-label', 'Toggle music');
+  btn.innerHTML = '♪';
+  btn.addEventListener('click', () => {
+    bgm.muted = !bgm.muted;
+    btn.classList.toggle('muted', bgm.muted);
+    btn.innerHTML = bgm.muted ? '♪̶' : '♪';
+  });
+  document.body.appendChild(btn);
 }

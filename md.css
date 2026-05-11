@@ -949,3 +949,28 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 @media (max-width: 760px) {
   #site.lang-ar .hero-text { text-align: right; }
 }
+
+/* ── Background music toggle button ── */
+#bgm-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 900;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(196,104,122,0.35);
+  background: rgba(255,255,255,0.75);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--rose-deep);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(196,104,122,0.15);
+  transition: opacity 0.2s, transform 0.2s;
+}
+#bgm-toggle:hover { transform: scale(1.1); opacity: 0.9; }
+#bgm-toggle.muted { opacity: 0.45; }
