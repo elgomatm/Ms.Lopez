@@ -8,27 +8,27 @@
 /* ─── LANGUAGE CONTENT ─── */
 const LANG = {
   en: {
-    dir: 'ltr',
+    dir: "ltr",
     messages: [
-      { p: 'Loading first child’s touches…',        s: '' },
-      { p: 'Preparing all the love we could carry…',     s: '' },
-      { p: 'Filling every moment with warmth…',          s: '' },
-      { p: 'Almost ready, Mama…',                        s: '' },
-      { p: '♡',                                           s: '' },
+      { p: "Loading first child’s touches…",           s: "" },
+      { p: "Preparing all the love we could carry…",   s: "" },
+      { p: "Filling every moment with warmth…",        s: "" },
+      { p: "Almost ready, Mama…",                      s: "" },
+      { p: "♡",                                         s: "" },
     ],
   },
   ar: {
-    dir: 'rtl',
+    dir: "rtl",
     messages: [
-      { p: 'جاري تحميل لمسات طفلك الأول…',
-        s: '(Loading your firstborn’s touches…)' },
-      { p: 'نُحضّر كل الحب الذي تستحقينه…',
-        s: '(Preparing all the love you deserve…)' },
-      { p: 'نملأ كل لحظة بدفئك وعطائك…',
-        s: '(Filling every moment with your warmth…)' },
-      { p: 'كل شيء جاهز بكل محبّة، يا أمي…',
-        s: '(Everything ready with all our love, Mama…)' },
-      { p: '♡', s: '' },
+      { p: "جاري تحميل لمسات طفلك الأوّل…",
+        s: "(Loading your firstborn’s touches…)" },
+      { p: "نُحضِّر كل الحب الذي تستحقينه…",
+        s: "(Preparing all the love you deserve…)" },
+      { p: "نملأ كل لحظة بدفئك وعطائك…",
+        s: "(Filling every moment with your warmth…)" },
+      { p: "كل شيء جاهز بكل محبّة، يا أمي…",
+        s: "(Everything ready with all our love, Mama…)" },
+      { p: "♡", s: "" },
     ],
   },
 };
