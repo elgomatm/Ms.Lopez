@@ -8,6 +8,45 @@
 /* ─── SELECTED LANGUAGE (set on button click, used when site reveals) ─── */
 let selectedLang = "en";
 
+/* ─── INDEXED DB PHOTO CACHE ────────────────────────────────────────────
+   Persists compressed images immediately on selection so photos survive
+   reload regardless of whether the Vercel Blob upload succeeds.
+──────────────────────────────────────────────────────────────────────── */
+const IDB_NAME = 'md-photos', IDB_STORE = 'slots';
+
+function _openIdb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+async function idbSave(label, value) {
+  try {
+    const db = await _openIdb();
+    await new Promise((res, rej) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, label);
+      tx.oncomplete = res; tx.onerror = () => rej(tx.error);
+    });
+  } catch (_) {}
+}
+async function idbLoadAll() {
+  try {
+    const db = await _openIdb();
+    return new Promise((resolve, reject) => {
+      const result = {}, tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).openCursor();
+      req.onsuccess = e => {
+        const c = e.target.result;
+        if (c) { result[c.key] = c.value; c.continue(); } else resolve(result);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  } catch (_) { return {}; }
+}
+
 /* ─── LOADER MESSAGES ─── */
 const LANG = {
   en: {
@@ -487,45 +526,54 @@ function compressToDataUrl(file) {
 async function uploadAndPersist(file, label, objectUrl) {
   try {
     const dataUrl = await compressToDataUrl(file);
+
+    /* ── Step 1: save compressed image to IndexedDB RIGHT NOW ──
+       This guarantees the photo survives a page reload even if
+       the Blob upload below fails or the token isn't configured. */
+    await idbSave(label, dataUrl);
+
+    /* ── Step 2: upload to Vercel Blob (best-effort) ── */
     const res  = await fetch('/api/md-upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ dataUrl, filename: `md-photo-${label}-${Date.now()}.jpg` }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!data.url) return;
+    if (!data.url) return; /* IndexedDB already has it — we're fine */
 
-    /* Swap objectUrl → permanent blob URL */
+    /* ── Step 3: upgrade — swap objectUrl & IndexedDB entry → permanent URL ── */
     URL.revokeObjectURL(objectUrl);
     const slot = document.querySelector(`.photo-slot[data-label="${CSS.escape(label)}"]`);
     const img  = slot?.querySelector('.slot-photo');
     if (img) img.src = data.url;
-    try { localStorage.setItem('md_photo__' + label, data.url); } catch (_) {}
+    await idbSave(label, data.url); /* replace large dataUrl with tiny CDN URL */
 
-    /* Rebuild manifest from all filled slots (exclude blob: URLs) */
+    /* ── Step 4: rebuild server manifest ── */
     const manifest = {};
     document.querySelectorAll('.photo-slot.has-photo').forEach(s => {
       const lbl = s.dataset.label;
       const im  = s.querySelector('.slot-photo');
-      if (lbl && im?.src && !im.src.startsWith('blob:')) manifest[lbl] = im.src;
+      if (lbl && im?.src && !im.src.startsWith('blob:') && !im.src.startsWith('data:'))
+        manifest[lbl] = im.src;
     });
     await fetch('/api/md-save-photos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ photos: manifest }),
     });
-  } catch (_) { /* silent — photo shows via objectUrl for this session */ }
+  } catch (_) { /* photo still shows via objectUrl for this session */ }
 }
 
 function initPhotoSlots() {
-  /* 1. Restore from localStorage immediately (instant) */
-  document.querySelectorAll('.photo-slot').forEach(slot => {
-    const key   = 'md_photo__' + (slot.dataset.label || '');
-    const saved = localStorage.getItem(key);
-    if (saved) applyPhoto(slot, saved);
+  /* 1. Restore from IndexedDB immediately (works offline & on localhost) */
+  idbLoadAll().then(cached => {
+    document.querySelectorAll('.photo-slot').forEach(slot => {
+      const src = cached[slot.dataset.label || ''];
+      if (src) applyPhoto(slot, src);
+    });
   });
 
-  /* 2. Sync server manifest in background */
+  /* 2. Sync server manifest in background (cross-device / permanent URLs) */
   fetch('/api/md-load-photos')
     .then(r => r.ok ? r.json() : { photos: {} })
     .then(({ photos }) => {
@@ -535,7 +583,7 @@ function initPhotoSlots() {
         const url   = photos[label];
         if (!url) return;
         applyPhoto(slot, url);
-        try { localStorage.setItem('md_photo__' + label, url); } catch (_) {}
+        idbSave(label, url); /* upgrade any cached dataUrl to permanent CDN URL */
       });
     })
     .catch(() => {});
