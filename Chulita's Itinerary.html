@@ -57,6 +57,8 @@
       top: 0;
       left: 0;
       right: 0;
+      transform: translateZ(0);
+      will-change: transform;
       z-index: 200;
     }
     .ticker-track {
@@ -95,6 +97,8 @@
       align-items: center;
       background: var(--cream);
       border-bottom: 1px solid var(--line);
+      transform: translateZ(0);
+      will-change: transform;
     }
     .nav-logo {
       font-family: 'Cormorant Garamond', serif;
@@ -156,6 +160,8 @@
       mix-blend-mode: multiply;
       z-index: 3;
       pointer-events: none;
+      transform: translateZ(0);
+      will-change: transform;
     }
 
 
@@ -292,6 +298,18 @@
     @keyframes bar-pulse {
       0%,100% { opacity:1; transform:scaleY(1); transform-origin:top; }
       50%      { opacity:0.35; transform:scaleY(0.5); transform-origin:top; }
+    }
+
+    /* ═══════════════════════════════════════
+       SCROLL PERFORMANCE
+    ═══════════════════════════════════════ */
+    .arrival, .timeline-section, .closing {
+      content-visibility: auto;
+      contain-intrinsic-size: 0 800px;
+    }
+    .ticker-track {
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     /* ═══════════════════════════════════════
@@ -700,11 +718,19 @@
       gap: 14px;
       padding: 18px 22px;
       background: var(--charcoal);
-      animation: promptPulse 2.2s ease-in-out infinite;
       cursor: pointer;
       transition: opacity 0.5s ease, max-height 0.5s ease;
       overflow: hidden;
       max-height: 80px;
+      transform: translateZ(0);
+    }
+    .tap-prompt::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.06);
+      animation: promptPulse 2.2s ease-in-out infinite;
+      pointer-events: none;
     }
     .tap-prompt.hidden {
       opacity: 0;
@@ -739,8 +765,8 @@
       50%       { opacity: 0.2; }
     }
     @keyframes promptPulse {
-      0%, 100% { background: var(--charcoal); }
-      50%       { background: #2a1e18; }
+      0%, 100% { opacity: 0; }
+      50%       { opacity: 1; }
     }
 
     /* swipe hint */
@@ -1417,11 +1443,6 @@
        JAVASCRIPT
   ══════════════════════════════════ -->
   <script>
-    /* ── NAV SCROLL BEHAVIOUR ───────────── */
-    const siteNav = document.getElementById('siteNav');
-    window.addEventListener('scroll', () => {
-      siteNav.classList.toggle('pinned', window.scrollY > 50);
-    }, { passive: true });
 
     /* ── COPY TO CLIPBOARD ──────────────── */
     function doCopy(row, targetId) {
